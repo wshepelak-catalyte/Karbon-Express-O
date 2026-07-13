@@ -16,6 +16,7 @@ class Ingredient:
         unit_amount (float): The quantity of the ingredient. Must be greater than zero.
         unit_of_measure (str): The unit used to measure the ingredient (e.g., grams, liters).
     """
+    id: int
     name: str
     purchasing_cost: Decimal | float
     unit_amount: float
@@ -44,6 +45,7 @@ class Ingredient:
 
         result_string = ""
         result_string += f"Ingredient\n"
+        result_string += f"   Id: {str(self.id)}\n"
         result_string += f"   Name: {self.name}\n"
         result_string += f"   Purchasing Cost: {str(self.purchasing_cost)}\n"
         result_string += f"   Unit Amount: {str(self.unit_amount)}\n"

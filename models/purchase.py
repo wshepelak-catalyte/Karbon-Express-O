@@ -8,6 +8,7 @@ class Purchase:
     """
         Represents a purchase with cost and measurement information.
     """
+    id: int
     timestamp: datetime
     items: list[any]
     total_cost: Decimal
