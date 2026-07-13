@@ -14,7 +14,7 @@ class Customer:
     Attributes:
         name (str): The name of the customer.
         email (str): The email of the customer.
-        lifetime_spent (Decimal): The life amount spent by the customer.
+        lifetime_spent (Decimal | float): The life amount spent by the customer.
     """
     name: str
     email: str
