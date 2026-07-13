@@ -66,8 +66,8 @@ class IngredientRepository:
             if _ingredient.name == name:
                 self._ingredients[iterator] = ingredient
                 return ingredient
-            else:
-                return None
+            
+        return None
 
     def delete(self, name: str) -> bool:
         """
