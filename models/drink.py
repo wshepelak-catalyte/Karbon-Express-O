@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import decimal
 from models.ingredient import Ingredient
 
 @dataclass
@@ -8,6 +9,6 @@ class Drink:
     """
     name: str
     ingredients: list[Ingredient]
-    cost_to_produce: float
-    markup_percentage: float
-    sale_price: float
+    cost_to_produce: decimal
+    markup_percentage: decimal
+    sale_price: decimal
