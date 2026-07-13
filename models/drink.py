@@ -5,7 +5,7 @@ from models.ingredient import Ingredient
 @dataclass
 class Drink:
     """
-        Represents an ingredient with cost and measyrement information.
+        Represents an ingredient with cost and measurement information.
     """
     name: str
     ingredients: list[Ingredient]
