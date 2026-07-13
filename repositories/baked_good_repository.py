@@ -1,3 +1,4 @@
+from typing import List, Optional
 from models.baked_good import BakedGood
 
 
@@ -8,6 +9,7 @@ class BakedGoodRepository:
         self._goods: List[BakedGood] = []
 
     def add(self, baked_good: BakedGood) -> None:
+        """Add a baked good to the repository."""
         if self.find_by_name(baked_good.name, baked_good.vendor_name) is not None:
             raise ValueError(
                 f"Baked good '{baked_good.name}' for vendor '{baked_good.vendor_name}' already exists."
@@ -15,23 +17,28 @@ class BakedGoodRepository:
         self._goods.append(baked_good)
 
     def all(self) -> List[BakedGood]:
+        """Return all baked goods."""
         return list(self._goods)
 
     def find_by_name(
         self, name: str, vendor_name: Optional[str] = None
     ) -> Optional[BakedGood]:
+        """Find a baked good by name, optionally filtering by vendor."""
         for good in self._goods:
             if good.name == name and (vendor_name is None or good.vendor_name == vendor_name):
                 return good
         return None
 
     def find_by_vendor(self, vendor_name: str) -> List[BakedGood]:
+        """Return all baked goods for a given vendor."""
         return [good for good in self._goods if good.vendor_name == vendor_name]
 
     def find_by_allergen(self, allergen: str) -> List[BakedGood]:
+        """Return baked goods that contain a given allergen."""
         return [good for good in self._goods if allergen in good.allergens]
 
     def update(self, baked_good: BakedGood) -> None:
+        """Replace an existing baked good with an updated instance."""
         for index, existing in enumerate(self._goods):
             if existing.name == baked_good.name and existing.vendor_name == baked_good.vendor_name:
                 self._goods[index] = baked_good
@@ -41,6 +48,7 @@ class BakedGoodRepository:
         )
 
     def remove(self, name: str, vendor_name: Optional[str] = None) -> None:
+        """Remove a baked good from the repository."""
         original_length = len(self._goods)
         self._goods = [
             good

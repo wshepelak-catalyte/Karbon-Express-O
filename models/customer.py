@@ -16,6 +16,7 @@ class Customer:
         email (str): The email of the customer.
         lifetime_spent (Decimal | float): The life amount spent by the customer.
     """
+    id: int
     name: str
     email: str
     lifetime_spend: float | Decimal
@@ -32,6 +33,7 @@ class Customer:
         String representation for a Customer
         """
         result_string = "Customer\n"
+        result_string += f"   Id: {str(self.id)}\n"
         result_string += f"   Name: {self.name}\n"
         result_string += f"   Email: {self.email}\n"
         result_string += f"   Lifetime Spend: ${str(self.lifetime_spend)}"

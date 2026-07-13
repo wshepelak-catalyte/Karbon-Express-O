@@ -11,7 +11,7 @@ class Purchase:
     """
         Represents a purchase with cost and measurement information.
     """
-    id: Number
+    id: int
     timestamp: datetime
     items: list[Any]
     total_cost: Decimal

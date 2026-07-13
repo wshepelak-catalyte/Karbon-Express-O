@@ -7,32 +7,37 @@ from decimal import Decimal
 from models.customer import Customer
 
 @pytest.mark.parametrize(
-    "customer, expected_name, expected_email, expected_spend",
+    "customer, expected_id, expected_name, expected_email, expected_spend",
     [
         (
             Customer(
+                id = 1,
                 name="Alice",
                 email="alice@example.com",
                 lifetime_spend=10.50
             ),
+            1,
             "Alice",
             "alice@example.com",
             Decimal("10.50")
         ),
         (
             Customer(
+                id = 2,
                 name="Bob",
                 email="bob@coffee.io",
                 lifetime_spend=0
             ),
+            2,
             "Bob",
             "bob@coffee.io",
             Decimal("0")
         )
     ]
 )
-def test_customer_initialization(customer, expected_name, expected_email, expected_spend):
+def test_customer_initialization(customer, expected_id, expected_name, expected_email, expected_spend):
     """Ensure Customer initializes with correct attribute values."""
+    assert customer.id == expected_id
     assert customer.name == expected_name
     assert customer.email == expected_email
     assert customer.lifetime_spend == expected_spend
@@ -40,19 +45,20 @@ def test_customer_initialization(customer, expected_name, expected_email, expect
 @pytest.mark.parametrize(
     "customer",
     [
-        Customer("Alice", "alice@exmaple.com", 10.50),
-        Customer("Bob", "bob@coffee.io", Decimal("5.25"))
+        Customer(1, "Alice", "alice@exmaple.com", 10.50),
+        Customer(2, "Bob", "bob@coffee.io", Decimal("5.25"))
     ]
 )
 def test_customer_types(customer):
     """Verify Customer fields have correct types."""
+    assert isinstance(customer.id, int)
     assert isinstance(customer.name, str)
     assert isinstance(customer.email, str)
     assert isinstance(customer.lifetime_spend, Decimal)
 
 def test_customer_decimal_cast():
     """Ensure lifetime_spend is cast to Decimal when initialized with float."""
-    customer = Customer("Charlie", "charlie@beans.net", 12.34)
+    customer = Customer(1, "Charlie", "charlie@beans.net", 12.34)
     assert isinstance(customer.lifetime_spend, Decimal)
     assert customer.lifetime_spend == Decimal("12.34")
 
@@ -74,12 +80,13 @@ def test_customer_invalid_email_format(email):
     """
     # The model does Not validate email format.
     # So Customer should still initialize successfully.
-    customer = Customer("Test", email, 1.0)
+    customer = Customer(1, "Test", email, 1.0)
     assert customer.email == email
 
 def test_customer_string_cast():
     """Verify Customer string cast is correctly formatted."""
     customer = Customer(
+        id=1,
         name="Alice",
         email="alice@example.com",
         lifetime_spend=Decimal("10.50")
@@ -87,6 +94,7 @@ def test_customer_string_cast():
 
     expected = (
         "Customer\n"
+        "   Id: 1\n"
         "   Name: Alice\n"
         "   Email: alice@example.com\n"
         "   Lifetime Spend: $10.50"
