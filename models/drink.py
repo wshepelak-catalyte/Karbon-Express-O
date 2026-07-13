@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
+from numbers import Number
 from models.ingredient import Ingredient
 
 @dataclass
@@ -7,6 +8,7 @@ class Drink:
     """
         Represents an ingredient with cost and measurement information.
     """
+    id: Number
     name: str
     ingredients: list[Ingredient]
     cost_to_produce: Decimal
