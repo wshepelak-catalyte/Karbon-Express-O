@@ -4,6 +4,7 @@ Tests for the Ingredent model.
 
 import pytest
 from models.ingredient import Ingredient
+from decimal import Decimal
 
 
 @pytest.mark.parametrize(
@@ -17,7 +18,7 @@ from models.ingredient import Ingredient
                     unit_of_measure="liter"
                 ),
                 "Milk",
-                3.50,
+                Decimal("3.50"),
                 1.0,
                 "liter"
             ),
@@ -29,7 +30,7 @@ from models.ingredient import Ingredient
                     unit_of_measure="gram"
                 ),
                 "Salt",
-                0.25,
+                Decimal("0.25"),
                 3.5,
                 "gram"
             )
@@ -63,6 +64,11 @@ def test_ingredient_initialization(ingredient, expected_name, expected_cost, exp
 def test_ingredient_types(ingredient):
     """Verify Ingredient fields have correct types."""
     assert isinstance(ingredient.name, str)
-    assert isinstance(ingredient.purchasing_cost, float)
+    assert isinstance(ingredient.purchasing_cost, Decimal)
     assert isinstance(ingredient.unit_amount, float)
     assert isinstance(ingredient.unit_of_measure, str)
+
+def test_ingredient_invalid_cost():
+    """Ensure negative purchasing_cost is logically invalid."""
+    with pytest.raises(ValueError):
+        Ingredient("Coffee Beans", -10.0, 1.0, "kg")

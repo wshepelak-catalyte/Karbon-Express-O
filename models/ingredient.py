@@ -1,17 +1,38 @@
 """
-Ingredient model for representing purchaseable items and their measurement units.
+Ingredient model for representing purchasable items and their measurement units.
 """
 
-# modles/ingredient.py
-
 from dataclasses import dataclass
+from decimal import Decimal
 
 @dataclass
 class Ingredient:
     """
-    Represents an ingredient with cost and measyrement information.
+    Represents an ingredient with cost and measurement information.
+
+    Attributes:
+        name (str): The name of the ingredient.
+        purchasing_cost (Decimal): The cost to purchase the ingredient. Must be non-negative.
+        unit_amount (float): The quantity of the ingredient. Must be greater than zero.
+        unit_of_measure (str): The unit used to measure the ingredient (e.g., grams, liters).
     """
     name: str
-    purchasing_cost: float
+    purchasing_cost: Decimal
     unit_amount: float
     unit_of_measure: str
+
+    def __post_init__(self):
+        """
+        Validate fields after initialization.
+
+        Raises:
+            ValueError: If purchasing_cost is negative or unit_amount is not greater than zero.
+        """
+        if not isinstance(self.purchasing_cost, Decimal):
+            self.purchasing_cost = Decimal(str(self.purchasing_cost))
+
+        if self.purchasing_cost < Decimal("0"):
+            raise ValueError("purchasing_cost cnnot be negative")
+        
+        if self.unit_amount <= 0:
+            raise ValueError("unit_amount must be greater than zero")
