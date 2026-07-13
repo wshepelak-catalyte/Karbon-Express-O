@@ -27,7 +27,7 @@ class Customer:
         if not isinstance(self.lifetime_spend, Decimal):
             self.lifetime_spend = Decimal(str(self.lifetime_spend))
 
-    def __str__(self):
+    def __str__(self)->str:
         """
         String representation for a Customer
         """
