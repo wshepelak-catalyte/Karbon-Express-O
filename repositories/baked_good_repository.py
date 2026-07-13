@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from models.baked_good import BakedGood
 
 
