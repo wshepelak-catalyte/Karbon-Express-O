@@ -10,8 +10,8 @@ from repositories.ingredient_repository import IngredientRepository
 def test_add_and_get_all():
     """Ensure ingredients are added and retrieved correctly."""
     repo = IngredientRepository()
-    milk = Ingredient("Milk", Decimal("3.50"), 1.0, "liter")
-    salt = Ingredient("Salt", Decimal("0.25"), 3.5, "gram")
+    milk = Ingredient(id=1, name="Milk", purchasing_cost=Decimal("3.50"), unit_amount=1.0, unit_of_measure="liter")
+    salt = Ingredient(id=2, name="Salt", purchasing_cost=Decimal("0.25"), unit_amount=3.5, unit_of_measure="gram")
 
     repo.add(milk)
     repo.add(salt)
@@ -25,7 +25,7 @@ def test_add_and_get_all():
 def test_get_by_name_found():
     """Ensure get_by_name retrns the correct ingredient."""
     repo = IngredientRepository()
-    ingredient = Ingredient("Sugar", Decimal("1.00"), 2.0, "cup")
+    ingredient = Ingredient(id=1, name="Sugar", purchasing_cost=Decimal("1.00"), unit_amount=2.0, unit_of_measure="cup")
     repo.add(ingredient)
 
     result = repo.get_by_name("Sugar")
@@ -43,8 +43,8 @@ def test_get_by_name_not_found():
 def test_update_success():
     """Ensure update replaces the correct ingredient."""
     repo = IngredientRepository()
-    old = Ingredient("Milk", Decimal("3.50"), 1.0, "liter")
-    new = Ingredient("Milk", Decimal("4.00"), 2.0, "liter")
+    old = Ingredient(id=1, name="Milk", purchasing_cost=Decimal("3.50"), unit_amount=1.0, unit_of_measure="liter")
+    new = Ingredient(id=1, name="Milk", purchasing_cost=Decimal("4.00"), unit_amount=2.0, unit_of_measure="liter")
 
     repo.add(old)
     updated = repo.update("Milk", new)
@@ -56,7 +56,7 @@ def test_update_success():
 def test_update_not_found():
     """Ensure update returns None when ingredient does not exist."""
     repo = IngredientRepository()
-    new = Ingredient("Milk", Decimal("4.00"), 2.0, "liter")
+    new = Ingredient(id=1, name="Milk", purchasing_cost=Decimal("4.00"), unit_amount=2.0, unit_of_measure="liter")
 
     result = repo.update("NotReal", new)
 
@@ -65,7 +65,7 @@ def test_update_not_found():
 def test_delete_success():
     """Ensure delete removes the ingredient and returns True."""
     repo = IngredientRepository()
-    ingredient = Ingredient("Salt", Decimal("0.25"), 3.5, "gram")
+    ingredient = Ingredient(id=1, name="Salt", purchasing_cost=Decimal("0.25"), unit_amount=3.5, unit_of_measure="gram")
     repo.add(ingredient)
 
     deleted = repo.delete("Salt")

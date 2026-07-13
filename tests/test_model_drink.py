@@ -29,7 +29,7 @@ def valid_drink():
 )
 def test_drink_id_initialization(mock_ingredient, id, name, cost_to_produce, markup_percentage, sale_price):
     ingredients = [mock_ingredient] if name != "Water" else []
-    drink = Drink(id, name, ingredients, cost_to_produce, markup_percentage, sale_price)
+    drink = Drink(id=id, name=name, ingredients=ingredients, cost_to_produce=cost_to_produce, markup_percentage=markup_percentage, sale_price=sale_price)
     assert drink.id == id
 
 @pytest.mark.parametrize(
@@ -42,7 +42,7 @@ def test_drink_id_initialization(mock_ingredient, id, name, cost_to_produce, mar
 )
 def test_drink_name_initialization(mock_ingredient, id, name, cost_to_produce, markup_percentage, sale_price):
     ingredients = [mock_ingredient] if name != "Water" else []
-    drink = Drink(id, name, ingredients, cost_to_produce, markup_percentage, sale_price)
+    drink = Drink(id=id, name=name, ingredients=ingredients, cost_to_produce=cost_to_produce, markup_percentage=markup_percentage, sale_price=sale_price)
     assert drink.name == name
 
 @pytest.mark.parametrize(
@@ -55,7 +55,7 @@ def test_drink_name_initialization(mock_ingredient, id, name, cost_to_produce, m
 )
 def test_drink_ingredients_initialization(mock_ingredient, id, name, cost_to_produce, markup_percentage, sale_price):
     ingredients = [mock_ingredient] if name != "Water" else []
-    drink = Drink(id, name, ingredients, cost_to_produce, markup_percentage, sale_price)
+    drink = Drink(id=id, name=name, ingredients=ingredients, cost_to_produce=cost_to_produce, markup_percentage=markup_percentage, sale_price=sale_price)
     assert drink.ingredients == ingredients
 
 @pytest.mark.parametrize(
@@ -68,7 +68,7 @@ def test_drink_ingredients_initialization(mock_ingredient, id, name, cost_to_pro
 )
 def test_drink_cost_to_produce_initialization(mock_ingredient, id, name, cost_to_produce, markup_percentage, sale_price):
     ingredients = [mock_ingredient] if name != "Water" else []
-    drink = Drink(id, name, ingredients, cost_to_produce, markup_percentage, sale_price)
+    drink = Drink(id=id, name=name, ingredients=ingredients, cost_to_produce=cost_to_produce, markup_percentage=markup_percentage, sale_price=sale_price)
     assert drink.cost_to_produce == cost_to_produce
 
 @pytest.mark.parametrize(
@@ -81,7 +81,7 @@ def test_drink_cost_to_produce_initialization(mock_ingredient, id, name, cost_to
 )
 def test_drink_markup_percentage_initialization(mock_ingredient, id, name, cost_to_produce, markup_percentage, sale_price):
     ingredients = [mock_ingredient] if name != "Water" else []
-    drink = Drink(id, name, ingredients, cost_to_produce, markup_percentage, sale_price)
+    drink = Drink(id=id, name=name, ingredients=ingredients, cost_to_produce=cost_to_produce, markup_percentage=markup_percentage, sale_price=sale_price)
     assert drink.markup_percentage == markup_percentage
 
 @pytest.mark.parametrize(
@@ -94,22 +94,22 @@ def test_drink_markup_percentage_initialization(mock_ingredient, id, name, cost_
 )
 def test_drink_sale_price_initialization(mock_ingredient, id, name, cost_to_produce, markup_percentage, sale_price):
     ingredients = [mock_ingredient] if name != "Water" else []
-    drink = Drink(id, name, ingredients, cost_to_produce, markup_percentage, sale_price)
+    drink = Drink(id=id, name=name, ingredients=ingredients, cost_to_produce=cost_to_produce, markup_percentage=markup_percentage, sale_price=sale_price)
     assert drink.sale_price == sale_price
 
 def test_drink_equality_with_identical_attributes(mock_ingredient):
-    drink_one = Drink(1, "Espresso", [mock_ingredient], Decimal("0.50"), Decimal("3.0"), Decimal("2.00"))
-    drink_two = Drink(1, "Espresso", [mock_ingredient], Decimal("0.50"), Decimal("3.0"), Decimal("2.00"))
+    drink_one = Drink(id=1, name="Espresso", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.50"), markup_percentage=Decimal("3.0"), sale_price=Decimal("2.00"))
+    drink_two = Drink(id=1, name="Espresso", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.50"), markup_percentage=Decimal("3.0"), sale_price=Decimal("2.00"))
     assert drink_one == drink_two
 
 def test_drink_inequality_with_different_ids(mock_ingredient):
-    drink_one = Drink(1, "Espresso", [mock_ingredient], Decimal("0.50"), Decimal("3.0"), Decimal("2.00"))
-    drink_two = Drink(2, "Espresso", [mock_ingredient], Decimal("0.50"), Decimal("3.0"), Decimal("2.00"))
+    drink_one = Drink(id=1, name="Espresso", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.50"), markup_percentage=Decimal("3.0"), sale_price=Decimal("2.00"))
+    drink_two = Drink(id=2, name="Espresso", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.50"), markup_percentage=Decimal("3.0"), sale_price=Decimal("2.00"))
     assert drink_one != drink_two
 
 def test_drink_inequality_with_different_names(mock_ingredient):
-    drink_one = Drink(1, "Espresso", [mock_ingredient], Decimal("0.50"), Decimal("3.0"), Decimal("2.00"))
-    drink_two = Drink(1, "Short Espresso", [mock_ingredient], Decimal("0.50"), Decimal("3.0"), Decimal("2.00"))
+    drink_one = Drink(id=1, name="Espresso", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.50"), markup_percentage=Decimal("3.0"), sale_price=Decimal("2.00"))
+    drink_two = Drink(id=1, name="Short Espresso", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.50"), markup_percentage=Decimal("3.0"), sale_price=Decimal("2.00"))
     assert drink_one != drink_two
 
 @pytest.mark.parametrize(
@@ -124,7 +124,7 @@ def test_drink_inequality_with_different_names(mock_ingredient):
     ]
 )
 def test_drink_mutability_after_initialization(mock_ingredient, attribute_name, mutated_value):
-    drink = Drink(2, "Latte", [mock_ingredient], Decimal("0.80"), Decimal("2.5"), Decimal("2.80"))
+    drink = Drink(id=2, name="Latte", ingredients=[mock_ingredient], cost_to_produce=Decimal("0.80"), markup_percentage=Decimal("2.5"), sale_price=Decimal("2.80"))
     setattr(drink, attribute_name, mutated_value)
     assert getattr(drink, attribute_name) == mutated_value
 

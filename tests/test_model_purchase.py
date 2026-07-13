@@ -32,7 +32,7 @@ def valid_purchase(mock_customer, mock_item):
 )
 def test_purchase_id_initialization(mock_customer, mock_item, id, total_cost):
     timestamp = datetime.now(timezone.utc)
-    purchase = Purchase(id, timestamp, [mock_item], total_cost, mock_customer)
+    purchase = Purchase(id=id, timestamp=timestamp, items=[mock_item], total_cost=total_cost, customer=mock_customer)
     assert purchase.id == id
 
 @pytest.mark.parametrize(
@@ -45,7 +45,7 @@ def test_purchase_id_initialization(mock_customer, mock_item, id, total_cost):
 )
 def test_purchase_timestamp_initialization(mock_customer, mock_item, id, total_cost):
     timestamp = datetime.now(timezone.utc)
-    purchase = Purchase(id, timestamp, [mock_item], total_cost, mock_customer)
+    purchase = Purchase(id=id, timestamp=timestamp, items=[mock_item], total_cost=total_cost, customer=mock_customer)
     assert isinstance(purchase.timestamp, datetime)
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_purchase_timestamp_initialization(mock_customer, mock_item, id, total_c
 def test_purchase_items_initialization(mock_customer, mock_item, id, total_cost):
     timestamp = datetime.now(timezone.utc)
     items = [mock_item]
-    purchase = Purchase(id, timestamp, items, total_cost, mock_customer)
+    purchase = Purchase(id=id, timestamp=timestamp, items=items, total_cost=total_cost, customer=mock_customer)
     assert purchase.items == items
 
 @pytest.mark.parametrize(
@@ -72,7 +72,7 @@ def test_purchase_items_initialization(mock_customer, mock_item, id, total_cost)
 )
 def test_purchase_total_cost_initialization(mock_customer, mock_item, id, total_cost):
     timestamp = datetime.now(timezone.utc)
-    purchase = Purchase(id, timestamp, [mock_item], total_cost, mock_customer)
+    purchase = Purchase(id=id, timestamp=timestamp, items=[mock_item], total_cost=total_cost, customer=mock_customer)
     assert purchase.total_cost == total_cost
 
 @pytest.mark.parametrize(
@@ -85,27 +85,27 @@ def test_purchase_total_cost_initialization(mock_customer, mock_item, id, total_
 )
 def test_purchase_customer_initialization(mock_customer, mock_item, id, total_cost):
     timestamp = datetime.now(timezone.utc)
-    purchase = Purchase(id, timestamp, [mock_item], total_cost, mock_customer)
+    purchase = Purchase(id=id, timestamp=timestamp, items=[mock_item], total_cost=total_cost, customer=mock_customer)
     assert purchase.customer == mock_customer
 
 def test_purchase_equality_with_identical_attributes(mock_customer, mock_item):
     fixed_time = datetime(2026, 7, 13, 12, 0, 0, tzinfo=timezone.utc)
     with patch("models.purchase.datetime") as mock_datetime:
         mock_datetime.now.return_value = fixed_time
-        purchase_one = Purchase(1, fixed_time, [mock_item], Decimal("5.00"), mock_customer)
-        purchase_two = Purchase(1, fixed_time, [mock_item], Decimal("5.00"), mock_customer)
+        purchase_one = Purchase(id=1, timestamp=fixed_time, items=[mock_item], total_cost=Decimal("5.00"), customer=mock_customer)
+        purchase_two = Purchase(id=1, timestamp=fixed_time, items=[mock_item], total_cost=Decimal("5.00"), customer=mock_customer)
         assert purchase_one == purchase_two
 
 def test_purchase_inequality_with_different_ids(mock_customer, mock_item):
     timestamp = datetime.now(timezone.utc)
-    purchase_one = Purchase(1, timestamp, [mock_item], Decimal("5.00"), mock_customer)
-    purchase_two = Purchase(2, timestamp, [mock_item], Decimal("5.00"), mock_customer)
+    purchase_one = Purchase(id=1, timestamp=timestamp, items=[mock_item], total_cost=Decimal("5.00"), customer=mock_customer)
+    purchase_two = Purchase(id=2, timestamp=timestamp, items=[mock_item], total_cost=Decimal("5.00"), customer=mock_customer)
     assert purchase_one != purchase_two
 
 def test_purchase_inequality_with_different_total_costs(mock_customer, mock_item):
     timestamp = datetime.now(timezone.utc)
-    purchase_one = Purchase(1, timestamp, [mock_item], Decimal("5.00"), mock_customer)
-    purchase_two = Purchase(1, timestamp, [mock_item], Decimal("6.00"), mock_customer)
+    purchase_one = Purchase(id=1, timestamp=timestamp, items=[mock_item], total_cost=Decimal("5.00"), customer=mock_customer)
+    purchase_two = Purchase(id=1, timestamp=timestamp, items=[mock_item], total_cost=Decimal("6.00"), customer=mock_customer)
     assert purchase_one != purchase_two
 
 @pytest.mark.parametrize(
