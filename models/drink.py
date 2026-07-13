@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from numbers import Number
 from models.ingredient import Ingredient
 
 @dataclass
