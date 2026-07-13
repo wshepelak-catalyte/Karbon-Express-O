@@ -1,24 +1,22 @@
-from dataclasses import dataclass
 from decimal import Decimal
+from dataclasses import dataclass, field
 
 @dataclass
 class BakedGood:
-    """Domain model representing a baked good in the cafe inventory."""
-    id: int
+    """Domain model representing a baked good purchased from a vendor."""
     name: str
-    description: str
-    price: Decimal
-    cost_to_produce: Decimal
-    quantity_in_stock: int
-    is_vegan: bool = False
-    is_gluten_free: bool = False
+    vendor_name: str
+    allergens: list[str]
+    purchasing_cost: Decimal
+    markup_percentage: Decimal
     
-    def apply_discount(self, percentage: float) -> Decimal:
-        """Applies a discount to the baked good."""
-        discount_amount = self.price * Decimal(percentage)
-        self.price -= discount_amount
-        return self.price
+    # field(init=False) prevents this from being required in the constructor
+    sale_price: Decimal = field(init=False)
 
-    def is_in_stock(self) -> bool:
-        """Checks if the item is currently available."""
-        return self.quantity_in_stock > 0
+    def __post_init__(self):
+        """Automatically calculates the sale price when the object is created."""
+        markup_amount = self.purchasing_cost * self.markup_percentage
+        calculated_price = self.purchasing_cost + markup_amount
+        
+        # Rounds the calculated price to 2 decimal places for currency
+        self.sale_price = calculated_price.quantize(Decimal('0.01'))
