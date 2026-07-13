@@ -13,7 +13,11 @@ class Drink:
     markup_percentage: Decimal
     sale_price: Decimal
 
-    def __post_init__(self) -> None:
+    def __post_init__(self):
+        markup_amount = self.cost_to_produce * self.markup_percentage
+        calculated_price = self.cost_to_produce + markup_amount        
+        self.sale_price = calculated_price.quantize(Decimal('0.01'))
+
         if not isinstance(self.cost_to_produce, Decimal):
             self.cost_to_produce = Decimal(str(self.cost_to_produce))
 
