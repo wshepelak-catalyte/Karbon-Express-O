@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from decimal import Decimal
+from typing import Any
 from models.customer import Customer
+
 
 @dataclass
 class Purchase:
@@ -9,7 +11,7 @@ class Purchase:
         Represents a purchase with cost and measurement information.
     """
     timestamp: datetime
-    items: list[any]
+    items: list[Any]
     total_cost: Decimal
     customer: Customer
 
