@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import pytest
 from models.purchase import Purchase
 
@@ -18,7 +18,7 @@ def mock_item():
 @pytest.fixture
 def valid_purchase(mock_customer, mock_item):
     return Purchase(
-        timestamp=datetime.now(),
+        timestamp=datetime.now(timezone.utc),
         items=[mock_item],
         total_cost=Decimal("15.50"),
         customer=mock_customer
@@ -34,7 +34,7 @@ def valid_purchase(mock_customer, mock_item):
     ]
 )
 def test_purchase_timestamp_initialization(mock_customer, mock_item, total_cost):
-    timestamp = datetime.now()
+    timestamp = datetime.now(timezone.utc)
     purchase = Purchase(timestamp, [mock_item], total_cost, mock_customer)
     assert isinstance(purchase.timestamp, datetime)
 
@@ -48,7 +48,7 @@ def test_purchase_timestamp_initialization(mock_customer, mock_item, total_cost)
     ]
 )
 def test_purchase_items_initialization(mock_customer, mock_item, total_cost):
-    timestamp = datetime.now()
+    timestamp = datetime.now(timezone.utc)
     items = [mock_item]
     purchase = Purchase(timestamp, items, total_cost, mock_customer)
     assert purchase.items == items
@@ -63,7 +63,7 @@ def test_purchase_items_initialization(mock_customer, mock_item, total_cost):
     ]
 )
 def test_purchase_total_cost_initialization(mock_customer, mock_item, total_cost):
-    timestamp = datetime.now()
+    timestamp = datetime.now(timezone.utc)
     purchase = Purchase(timestamp, [mock_item], total_cost, mock_customer)
     assert purchase.total_cost == total_cost
 
@@ -77,20 +77,22 @@ def test_purchase_total_cost_initialization(mock_customer, mock_item, total_cost
     ]
 )
 def test_purchase_customer_initialization(mock_customer, mock_item, total_cost):
-    timestamp = datetime.now()
+    timestamp = datetime.now(timezone.utc)
     purchase = Purchase(timestamp, [mock_item], total_cost, mock_customer)
     assert purchase.customer == mock_customer
 
 
 def test_purchase_equality_with_identical_attributes(mock_customer, mock_item):
-    timestamp = datetime.now()
-    purchase_one = Purchase(timestamp, [mock_item], Decimal("5.00"), mock_customer)
-    purchase_two = Purchase(timestamp, [mock_item], Decimal("5.00"), mock_customer)
-    assert purchase_one == purchase_two
+    fixed_time = datetime(2026, 7, 13, 12, 0, 0, tzinfo=timezone.utc)
+    with patch("models.purchase.datetime") as mock_datetime:
+        mock_datetime.now.return_value = fixed_time
+        purchase_one = Purchase(fixed_time, [mock_item], Decimal("5.00"), mock_customer)
+        purchase_two = Purchase(fixed_time, [mock_item], Decimal("5.00"), mock_customer)
+        assert purchase_one == purchase_two
 
 
 def test_purchase_inequality_with_different_total_costs(mock_customer, mock_item):
-    timestamp = datetime.now()
+    timestamp = datetime.now(timezone.utc)
     purchase_one = Purchase(timestamp, [mock_item], Decimal("5.00"), mock_customer)
     purchase_two = Purchase(timestamp, [mock_item], Decimal("6.00"), mock_customer)
     assert purchase_one != purchase_two
