@@ -12,12 +12,12 @@ class Ingredient:
 
     Attributes:
         name (str): The name of the ingredient.
-        purchasing_cost (Decimal): The cost to purchase the ingredient. Must be non-negative.
+        purchasing_cost (Decimal | float): The cost to purchase the ingredient. Must be non-negative.
         unit_amount (float): The quantity of the ingredient. Must be greater than zero.
         unit_of_measure (str): The unit used to measure the ingredient (e.g., grams, liters).
     """
     name: str
-    purchasing_cost: Decimal
+    purchasing_cost: Decimal | float
     unit_amount: float
     unit_of_measure: str
 
@@ -37,9 +37,9 @@ class Ingredient:
         if self.unit_amount <= 0:
             raise ValueError("unit_amount must be greater than zero")
         
-    def __str__(self):
+    def __str__(self)->str:
         """
-        String representation for a an Ingredient object
+        String representation for an Ingredient object
         """
 
         result_string = ""
