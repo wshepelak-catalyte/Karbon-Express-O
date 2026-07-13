@@ -36,3 +36,17 @@ class Ingredient:
         
         if self.unit_amount <= 0:
             raise ValueError("unit_amount must be greater than zero")
+        
+    def __str__(self):
+        """
+        String representation for a an Ingredient object
+        """
+
+        result_string = ""
+        result_string += f"Ingredient\n"
+        result_string += f"   Name: {self.name}\n"
+        result_string += f"   Purchasing Cost: {str(self.purchasing_cost)}\n"
+        result_string += f"   Unit Amount: {str(self.unit_amount)}\n"
+        result_string += f"   Unit of Measure: {self.unit_of_measure}"
+
+        return result_string
