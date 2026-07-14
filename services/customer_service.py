@@ -9,4 +9,4 @@ class CustomerService:
         self._repostory = repository
 
     def validate_email_format(self, email : str) -> bool:
-        return (re.fullmatch(EMAIL_PATTERN, email) not None)
+        return re.fullmatch(EMAIL_PATTERN, email) is not None
