@@ -3,8 +3,6 @@ from repositories.customer_repository import CustomerRepository
 
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]{1,30}@[A-Za-z0-9.-]{1,30}\.[A-Za-z]{2,15}$")
 
-EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]{1,30}@[A-Za-z0-9.-]{1,30}+\.[A-Za-z]{2,15}$")
-
 class CustomerService:
     def __init__(self, repository: CustomerRepository):
         self.repository = repository
