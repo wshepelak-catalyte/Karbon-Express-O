@@ -7,6 +7,7 @@ class Drink:
     """
         Represents an ingredient with cost and measurement information.
     """
+    id: int
     name: str
     ingredients: list[Ingredient]
     cost_to_produce: Decimal

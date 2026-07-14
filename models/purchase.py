@@ -1,7 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from decimal import Decimal
+from numbers import Number
+from typing import Any
 from models.customer import Customer
+
 
 @dataclass
 class Purchase:
@@ -10,7 +13,7 @@ class Purchase:
     """
     id: int
     timestamp: datetime
-    items: list[any]
+    items: list[Any]
     total_cost: Decimal
     customer: Customer
 

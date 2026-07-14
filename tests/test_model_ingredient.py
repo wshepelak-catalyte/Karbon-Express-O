@@ -79,7 +79,7 @@ def test_ingredient_types(ingredient):
 def test_ingredient_invalid_cost():
     """Ensure negative purchasing_cost is logically invalid."""
     with pytest.raises(ValueError):
-        Ingredient(1, "Coffee Beans", -10.0, 1.0, "kg")
+        Ingredient(id=1, name="Coffee Beans", purchasing_cost=-10.0, unit_amount=1.0, unit_of_measure="kg")
 
 def test_ingredient_string_cast():
     """Verify Ingredient string cast is correctly formated."""
@@ -91,4 +91,4 @@ def test_ingredient_string_cast():
         unit_of_measure="liter"
     )
 
-    assert str(test_ingredient) == "Ingredient\n   Id:1\n   Name: Milk\n   Purchasing Cost: 3.50\n   Unit Amount: 1.0\n   Unit of Measure: liter"
+    assert str(test_ingredient) == "Ingredient\n   Id: 1\n   Name: Milk\n   Purchasing Cost: 3.50\n   Unit Amount: 1.0\n   Unit of Measure: liter"
