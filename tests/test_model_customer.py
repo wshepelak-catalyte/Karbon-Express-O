@@ -11,7 +11,7 @@ from models.customer import Customer
     [
         (
             Customer(
-                id = 1,
+                id=1,
                 name="Alice",
                 email="alice@example.com",
                 lifetime_spend=10.50
@@ -23,7 +23,7 @@ from models.customer import Customer
         ),
         (
             Customer(
-                id = 2,
+                id=2,
                 name="Bob",
                 email="bob@coffee.io",
                 lifetime_spend=0
@@ -45,8 +45,8 @@ def test_customer_initialization(customer, expected_id, expected_name, expected_
 @pytest.mark.parametrize(
     "customer",
     [
-        Customer(1, "Alice", "alice@exmaple.com", 10.50),
-        Customer(2, "Bob", "bob@coffee.io", Decimal("5.25"))
+        Customer(id=1, name="Alice", email="alice@exmaple.com", lifetime_spend=10.50),
+        Customer(id=2, name="Bob", email="bob@coffee.io", lifetime_spend=Decimal("5.25"))
     ]
 )
 def test_customer_types(customer):
@@ -58,7 +58,7 @@ def test_customer_types(customer):
 
 def test_customer_decimal_cast():
     """Ensure lifetime_spend is cast to Decimal when initialized with float."""
-    customer = Customer(1, "Charlie", "charlie@beans.net", 12.34)
+    customer = Customer(id=1, name="Charlie", email="charlie@beans.net", lifetime_spend=12.34)
     assert isinstance(customer.lifetime_spend, Decimal)
     assert customer.lifetime_spend == Decimal("12.34")
 
@@ -80,7 +80,7 @@ def test_customer_invalid_email_format(email):
     """
     # The model does Not validate email format.
     # So Customer should still initialize successfully.
-    customer = Customer(1, "Test", email, 1.0)
+    customer = Customer(id=1, name="Test", email=email, lifetime_spend=1.0)
     assert customer.email == email
 
 def test_customer_string_cast():
