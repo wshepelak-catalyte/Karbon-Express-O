@@ -9,6 +9,7 @@ class IngredientService:
 
     def new_ingredient(self, ingredient : Ingredient) -> Ingredient:
         if self._repository.get_by_name(ingredient.name) is not None:
-            raise DuplicateIngredientError(f"Ingredient \'{ingredient.name}\' already exists.")
+            # raise DuplicateIngredientError(f"Ingredient \'{ingredient.name}\' already exists.")
+            pass
         return self._repository.add(ingredient)
     

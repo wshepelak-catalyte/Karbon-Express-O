@@ -8,6 +8,7 @@ class CustomerService:
         self.repository = repository
 
     def validate_email_format(self, email: str) -> bool:
+        """Validates that customer email follows a proper format"""
         return re.fullmatch(EMAIL_PATTERN, email) is not None
 
     def is_email_taken(self, email: str, exclude_id: int | None = None) -> bool:
