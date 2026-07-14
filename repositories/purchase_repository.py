@@ -31,6 +31,18 @@ class PurchaseRepository:
         """
         return next((p for p in self._purchases if p.id == id), None)
 
+    def get_by_customer_username(self, username: str) -> list[Purchase]:
+        """Retrieve all purchases associated with a given customer username."""
+        if username is None:
+            return []
+        lookup = username.strip().lower()
+        return [
+            p
+            for p in self._purchases
+            if isinstance(p.customer.username, str)
+            and p.customer.username.strip().lower() == lookup
+        ]
+
     def add(self, purchase: Purchase) -> Purchase:
         """Adds a new purchase transaction record to the repository.
 

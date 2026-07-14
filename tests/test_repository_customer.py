@@ -10,8 +10,8 @@ from repositories.customer_repository import CustomerRepository
 def test_add_and_get_all():
     """Ensure customers are added and retrieved correctly."""
     repo = CustomerRepository()
-    alice = Customer(id=1, name="Alice", email="alice@example.com", lifetime_spend=10.50)
-    bob = Customer(id=2, name="Bob", email="bob@coffee.io", lifetime_spend=0)
+    alice = Customer(id=1, name="Alice", email="alice@example.com", phone="555-0001", username="alice123", lifetime_spend=10.50)
+    bob = Customer(id=2, name="Bob", email="bob@coffee.io", phone="555-0002", username="bob123", lifetime_spend=0)
 
     repo.add(alice)
     repo.add(bob)
@@ -25,7 +25,7 @@ def test_add_and_get_all():
 def test_get_by_name_found():
     """Ensure get_by_name retrns the correct customer."""
     repo = CustomerRepository()
-    customer = Customer(id=1, name="Charlie", email="charlie@beans.net", lifetime_spend=12.34)
+    customer = Customer(id=1, name="Charlie", email="charlie@beans.net", phone="555-0003", username="charlie123", lifetime_spend=12.34)
     repo.add(customer)
 
     result = repo.get_by_name("Charlie")
@@ -43,8 +43,8 @@ def test_get_by_name_not_found():
 def test_update_success():
     """Ensure update replaces the correct customer."""
     repo = CustomerRepository()
-    old = Customer(id=1, name="Alice", email="alice@example.com", lifetime_spend=10.50)
-    new = Customer(id=1, name="Alice", email="alice@awesome.com", lifetime_spend=11.50)
+    old = Customer(id=1, name="Alice", email="alice@example.com", phone="555-0001", username="alice123", lifetime_spend=10.50)
+    new = Customer(id=1, name="Alice", email="alice@awesome.com", phone="555-0001", username="alice123", lifetime_spend=11.50)
 
     repo.add(old)
     updated = repo.update("Alice", new)
@@ -56,7 +56,7 @@ def test_update_success():
 def test_update_not_found():
     """Ensure update returns None when customer does not exist."""
     repo = CustomerRepository()
-    new = Customer(id=1, name="Alice", email="alice@example.com", lifetime_spend=10.50)
+    new = Customer(id=1, name="Alice", email="alice@example.com", phone="555-0001", username="alice123", lifetime_spend=10.50)
 
     result = repo.update("NotReal", new)
 
@@ -65,7 +65,7 @@ def test_update_not_found():
 def test_delete_success():
     """Ensure delete removes the customer and returns True."""
     repo = CustomerRepository()
-    customer = Customer(id=1, name="Alice", email="alice@example.com", lifetime_spend=10.50)
+    customer = Customer(id=1, name="Alice", email="alice@example.com", phone="555-0001", username="alice123", lifetime_spend=10.50)
     repo.add(customer)
 
     deleted = repo.delete("Alice")

@@ -28,7 +28,7 @@ class CustomerRepository:
     
     def get_by_name(self, name : str) -> Customer | None:
         """
-        Retrieve a Customer by its name.
+        Retrieve a Customer by its legal name (case-insensitive).
 
         Args:
             name (str): The name of the customer to search for.
@@ -36,7 +36,40 @@ class CustomerRepository:
         Returns:
             Customer | None: The matching Customer, or None if no customer is found.
         """
-        return next((c for c in self._customers if c.name == name), None)
+        if name is None:
+            return None
+        lookup = name.strip().lower()
+        return next((c for c in self._customers if isinstance(c.name, str) and c.name.strip().lower() == lookup), None)
+
+    def get_by_username(self, username : str) -> Customer | None:
+        """
+        Retrieve a Customer by username (case-insensitive).
+
+        Args:
+            username (str): The username of the customer to search for.
+
+        Returns:
+            Customer | None: The matching Customer, or None if no customer is found.
+        """
+        if username is None:
+            return None
+        lookup = username.strip().lower()
+        return next((c for c in self._customers if isinstance(c.username, str) and c.username.strip().lower() == lookup), None)
+
+    def get_by_email(self, email : str) -> Customer | None:
+        """
+        Retrieve a Customer by its email (case-insensitive).
+
+        Args:
+            email (str): The email of the customer to search for.
+
+        Returns:
+            Customer | None: The matching Customer, or None if no customer is found.
+        """
+        if email is None:
+            return None
+        lookup = email.strip().lower()
+        return next((c for c in self._customers if isinstance(c.email, str) and c.email.strip().lower() == lookup), None)
     
     def add(self, customer : Customer) -> Customer:
         """

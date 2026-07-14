@@ -31,6 +31,20 @@ class DrinkRepository:
         """
         return next((d for d in self._drinks if d.id == id), None)
 
+    def get_by_name(self, name: str) -> Drink | None:
+        """Finds a drink by its name (case-insensitive, trimmed).
+
+        Args:
+            name (str): The name of the drink to look up.
+
+        Returns:
+            Drink | None: The matching Drink object if found; otherwise, None.
+        """
+        if name is None:
+            return None
+        lookup = name.strip().lower()
+        return next((d for d in self._drinks if isinstance(d.name, str) and d.name.strip().lower() == lookup), None)
+
     def add(self, drink: Drink) -> Drink:
         """Adds a new drink record to the repository.
 
