@@ -1,23 +1,26 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from models.ingredient import Ingredient
+
 
 @dataclass
 class Drink:
     """
-        Represents an ingredient with cost and measurement information.
+    Represents a drink recipe and whether it is currently available for use.
     """
+
     id: int
     name: str
     ingredients: list[Ingredient]
     cost_to_produce: Decimal
     markup_percentage: Decimal
     sale_price: Decimal
+    is_available: bool = field(default=True)
 
     def __post_init__(self):
         markup_amount = self.cost_to_produce * self.markup_percentage
-        calculated_price = self.cost_to_produce + markup_amount        
-        self.sale_price = calculated_price.quantize(Decimal('0.01'))
+        calculated_price = self.cost_to_produce + markup_amount
+        self.sale_price = calculated_price.quantize(Decimal("0.01"))
 
         if not isinstance(self.cost_to_produce, Decimal):
             self.cost_to_produce = Decimal(str(self.cost_to_produce))
