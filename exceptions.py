@@ -16,15 +16,28 @@ class InvalidEmailError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
+class DuplicateUsernameError(Exception):
+    """Exception raised when attempting to create a duplicate username."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+class DuplicatebakedgoodError(Exception):
+    """Exception raised when attempting to create a duplicate baked good."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
 class DuplicateIngredientError(Exception):
     """Exception raised when attempting to create a duplicate ingredient."""
 
-    def __init__(self, message : str):
+    def __init__(self, message: str):
         super().__init__(message)
 
-class IngredientNotFound(Exception):
-    """Exception raised when attemption to get an ingredient that does not exist."""
+class ItemNotFoundError(Exception):
+    """Exception raised when an item is not found in the repository."""
 
-    def __init__(self, message : str):
+    def __init__(self, message: str):
         super().__init__(message)
 
+        

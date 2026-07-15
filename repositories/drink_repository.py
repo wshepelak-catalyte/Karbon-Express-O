@@ -11,7 +11,7 @@ class DrinkRepository:
 
     def __init__(self):
         """Initializes an empty drink repository."""
-        self._drinks: list[OrderedDict[str, Drink]] = []
+        self._drinks = OrderedDict()
 
     def get_all(self) -> list[Drink]:
         """Retrieves all drinks currently stored in the repository.
@@ -19,18 +19,9 @@ class DrinkRepository:
         Returns:
             list[Drink]: A list containing all managed Drink objects.
         """
-        return [drink for drink_dict in self._drinks for drink in drink_dict.values()]
+        return list(self._drinks.values())
 
-    def get_by_id(self, id: Number) -> Drink | None:
-        """Finds a specific drink by its unique numerical identifier.
-
-        Args:
-            id (Number): The numeric ID of the drink to look up.
-
-        Returns:
-            Drink | None: The matching Drink object if found; otherwise, None.
-        """
-        return next((d for drink_dict in self._drinks for d in drink_dict.values() if d.id == id), None)
+   
 
     def get_by_name(self, name: str) -> Drink | None:
         """Finds a drink by its name (case-insensitive, trimmed).
@@ -41,10 +32,8 @@ class DrinkRepository:
         Returns:
             Drink | None: The matching Drink object if found; otherwise, None.
         """
-        if name is None:
-            return None
-        lookup = name.strip().lower()
-        return next((d for drink_dict in self._drinks for d in drink_dict.values() if isinstance(d.name, str) and d.name.strip().lower() == lookup), None)
+       
+        return self._drinks.get(name)
 
     def add(self, drink: Drink) -> Drink:
         """Adds a new drink record to the repository.
@@ -55,41 +44,40 @@ class DrinkRepository:
         Returns:
             Drink: The Drink instance that was successfully added.
         """
-        self._drinks.append(OrderedDict([(drink.name, drink)]))
+        self._drink[drink.name] = drink
         return drink
 
     def update(self, name: str, drink: Drink) -> Drink | None:
         """Replaces an existing drink record with updated information.
 
         Args:
-            name (str): The name of the drink to update.
+            id (Number): The numeric ID of the drink to update.
             drink (Drink): The new Drink instance to replace the old record.
 
         Returns:
             Drink | None: The updated Drink instance if the target ID was found
                 and replaced; otherwise, None.
         """
-        existing_drink = self.get_by_name(name)
-        if existing_drink:
-            self._drinks.remove(OrderedDict([(existing_drink.name, existing_drink)]))
-            self._drinks.append(OrderedDict([(drink.name, drink)]))
+        
+        if self._drinks.get[name] is None:
+            return None
+        
+        self._drinks[name] = drink
+        return drink
 
-            return drink
-        return None
-
-    def delete(self, name: str) -> bool:
-        """Removes a drink record from the repository by its name.
+    def delete(self, id: Number) -> bool:
+        """Removes a drink record from the repository by its ID.
 
         Args:
-            name (str): The name of the drink to remove.
+            id (Number): The numeric ID of the drink to remove.
 
         Returns:
             bool: True if the drink was found and successfully deleted; False
                 if no matching record was found.
         """
-        drink = self.get_by_name(name)
+        drink = self.get_by_id(id)
         if drink:
-            self._drinks.remove(OrderedDict([(drink.name, drink)]))
+            self._drinks.remove(OrderedDict([(drink.id, drink)]))
             
             return True
         return False
