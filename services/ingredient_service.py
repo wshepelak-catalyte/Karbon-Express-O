@@ -17,6 +17,7 @@ class IngredientService:
         self._availability_repository = availability_repository
         self._drink_repository = drink_repository
 
+<<<<<<< HEAD
     def new_ingredient(self, ingredient: Ingredient) -> Ingredient:
         if self._repository.get_by_name(ingredient.name) is not None:
             return self._repository.get_by_name(ingredient.name)
@@ -47,3 +48,28 @@ class IngredientService:
         if drink is None:
             return False
         return getattr(drink, "is_available", True)
+=======
+    def create_ingredient(self, ingredient : Ingredient):
+        pass
+
+    def get_all_ingredients(self) -> list[Ingredient]:
+        return self._repository.get_all()
+    
+    def get_ingredient_by_name(self, name : str) -> Ingredient:
+        returned_ingredient = self._repository.get_by_name(name)
+        if returned_ingredient is None:
+            raise #ingredient not found
+        return returned_ingredient
+    
+    def update_ingredient(self, ):
+        pass
+
+    def delete_ingredient(self, name : str) -> Ingredient | None:
+        deleted_ingredient = self._repository.get_by_name(name)
+        if self._repository.delete(name):
+            return deleted_ingredient
+        else:
+            return None
+    
+    
+>>>>>>> b4081b64c9b18090a23187f51ad6173090490730

@@ -49,7 +49,7 @@ class CustomerService:
                 message=f"Username '{customer.username}' is already taken. Please choose a different username."
             )
 
-        if not self.is_email_taken(customer.email):
+        if self.is_email_taken(customer.email):
             return ValidationResult(
                 valid=False,
                 code="duplicate_email",
