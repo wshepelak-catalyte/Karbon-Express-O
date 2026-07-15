@@ -10,14 +10,21 @@ from models.baked_good import BakedGood
 from repositories.baked_good_repository import BakedGoodRepository
 
 
-def make_baked_good(id_value: int, name: str, vendor_name: str, allergens: list[str]) -> BakedGood:
+def make_baked_good(
+    id_value: int,
+    name: str,
+    vendor_name: str,
+    allergens: list[str],
+    purchasing_cost: Decimal | float = Decimal("2.50"),
+    markup_percentage: Decimal | float = Decimal("0.20"),
+) -> BakedGood:
     return BakedGood(
         id=id_value,
         name=name,
         vendor_name=vendor_name,
         allergens=allergens,
-        purchasing_cost=2.50,
-        markup_percentage=0.20,
+        purchasing_cost=purchasing_cost,
+        markup_percentage=markup_percentage,
     )
 
 
@@ -77,8 +84,8 @@ def test_update_and_delete_change_repository_state():
         name="Croissant",
         vendor_name="Bakery A",
         allergens=["gluten", "milk"],
-        purchasing_cost=3.00,
-        markup_percentage=0.25,
+        purchasing_cost=Decimal("3.00"),
+        markup_percentage=Decimal("0.25"),
     )
 
     repo.update("Croissant", "Bakery A", updated)
@@ -98,3 +105,23 @@ def test_duplicate_add_raises_value_error():
 
     with pytest.raises(ValueError):
         repo.add(croissant)
+
+
+def test_find_by_name_and_remove_aliases_work():
+    """Ensure compatibility aliases route to the underlying repository behavior."""
+    repo = BakedGoodRepository()
+    croissant = make_baked_good(1, "Croissant", "Bakery A", ["gluten"])
+    repo.add(croissant)
+
+    assert repo.find_by_name("Croissant", "Bakery A") is croissant
+    assert repo.remove("Croissant", "Bakery A") is True
+    assert repo.get_all() == []
+
+
+def test_update_missing_item_returns_none():
+    """Ensure updates on missing entries return None instead of mutating state."""
+    repo = BakedGoodRepository()
+    updated = make_baked_good(99, "Croissant", "Bakery A", ["gluten"])
+
+    assert repo.update("Croissant", "Bakery A", updated) is None
+    assert repo.get_all() == []
