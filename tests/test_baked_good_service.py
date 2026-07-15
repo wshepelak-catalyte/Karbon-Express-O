@@ -36,6 +36,14 @@ def test_name_duplicate_validation_ignores_same_item_when_updating():
     assert service.is_name_taken("Muffin", "Bakery A") is False
 
 
+def test_name_duplicate_validation_treats_whitespace_and_case_as_equal():
+    repository = BakedGoodRepository()
+    service = BakedGoodService(repository)
+    repository.add(make_baked_good(1, "Croissant", "Bakery A"))
+
+    assert service.is_name_taken("  CROISSANT  ", "  bakery a  ") is True
+
+
 def test_add_baked_good_raises_for_duplicate_name_and_vendor():
     repository = BakedGoodRepository()
     service = BakedGoodService(repository)
@@ -53,3 +61,11 @@ def test_update_baked_good_raises_for_conflicting_name_and_vendor():
 
     with pytest.raises(ValueError):
         service.update_baked_good(make_baked_good(2, "Croissant", "Bakery A"))
+
+
+def test_update_baked_good_raises_when_target_does_not_exist():
+    repository = BakedGoodRepository()
+    service = BakedGoodService(repository)
+
+    with pytest.raises(ValueError):
+        service.update_baked_good(make_baked_good(1, "Croissant", "Bakery A"))
