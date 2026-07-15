@@ -28,7 +28,8 @@ class IngredientService:
                 name : str,
                 purchasing_cost : float | Decimal,
                 unit_amount : float,
-                unit_of_measure : str
+                unit_of_measure : str,
+                available: bool
             ):
         """
         Create a new ingredientand store it in the repository.
@@ -43,6 +44,8 @@ class IngredientService:
             The amount of the ingredient per unit.
         unit_of_measure : str
             The unit of measurement (e.g., 'grams', 'onces').
+        available : bool
+            The availability of the ingredient.
 
         Notes
         -----
@@ -66,7 +69,8 @@ class IngredientService:
                 name=name,
                 purchasing_cost=purchasing_cost,
                 unit_amount=unit_amount,
-                unit_of_measure=unit_of_measure
+                unit_of_measure=unit_of_measure,
+                available=available
             )
         self._repository.add(created_ingredient)
 
@@ -80,6 +84,17 @@ class IngredientService:
             A list of Ingredient objects.
         """
         return self._repository.get_all()
+    
+    def get_available_ingredients(self) -> list[Ingredient]:
+        """
+        Retrieve all ingredients that are available
+
+        Returns
+        -------
+        list[Ingredient]
+            A list of Ingredient objects that are available.
+        """
+        return [ingredient for ingredient in self._repository.get_all() if ingredient.available]
     
     def get_ingredient_by_name(self, name : str) -> Ingredient:
         """
@@ -110,7 +125,8 @@ class IngredientService:
                 name : str,
                 purchasing_cost : float | Decimal,
                 unit_amount : float,
-                unit_of_measure : str
+                unit_of_measure : str,
+                available : bool
             ):
         """
         Update an existing ingredient's stored attributes.
@@ -125,6 +141,8 @@ class IngredientService:
             The updated unit amount.
         unit_of_measure : str
             The updated unit of measurement.
+        available : bool
+            The updated status of the ingredient's availability.
 
         Raises
         ------
@@ -140,7 +158,8 @@ class IngredientService:
             name=name,
             purchasing_cost=purchasing_cost,
             unit_amount=unit_amount,
-            unit_of_measure=unit_of_measure
+            unit_of_measure=unit_of_measure,
+            available=available
         )
 
         self._repository.update(name, updated_ingredient)
