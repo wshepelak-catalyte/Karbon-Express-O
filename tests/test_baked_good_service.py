@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+import pytest
+
 from models.baked_good import BakedGood
 from repositories.baked_good_repository import BakedGoodRepository
 from services.baked_good_service import BakedGoodService
@@ -32,3 +34,22 @@ def test_name_duplicate_validation_ignores_same_item_when_updating():
 
     assert service.is_name_taken("Croissant", "Bakery A", exclude_id=1) is False
     assert service.is_name_taken("Muffin", "Bakery A") is False
+
+
+def test_add_baked_good_raises_for_duplicate_name_and_vendor():
+    repository = BakedGoodRepository()
+    service = BakedGoodService(repository)
+    service.add_baked_good(make_baked_good(1, "Croissant", "Bakery A"))
+
+    with pytest.raises(ValueError):
+        service.add_baked_good(make_baked_good(2, "Croissant", "Bakery A"))
+
+
+def test_update_baked_good_raises_for_conflicting_name_and_vendor():
+    repository = BakedGoodRepository()
+    service = BakedGoodService(repository)
+    existing = make_baked_good(1, "Croissant", "Bakery A")
+    repository.add(existing)
+
+    with pytest.raises(ValueError):
+        service.update_baked_good(make_baked_good(2, "Croissant", "Bakery A"))

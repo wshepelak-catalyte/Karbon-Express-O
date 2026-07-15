@@ -21,7 +21,7 @@ def make_baked_good(id_value: int, name: str, vendor_name: str, allergens: list[
     )
 
 
-def test_add_and_all_returns_added_items():
+def test_add_and_get_all_returns_added_items():
     """Ensure baked goods are stored and returned from the repository."""
     repo = BakedGoodRepository()
     croissant = make_baked_good(1, "Croissant", "Bakery A", ["gluten"])
@@ -30,14 +30,14 @@ def test_add_and_all_returns_added_items():
     repo.add(croissant)
     repo.add(muffin)
 
-    all_goods = repo.all()
+    all_goods = repo.get_all()
 
     assert len(all_goods) == 2
     assert all_goods[0].name == "Croissant"
     assert all_goods[1].name == "Muffin"
 
 
-def test_find_by_name_and_vendor_filters_correctly():
+def test_get_by_name_and_vendor_filters_correctly():
     """Ensure name lookup can be scoped to a vendor."""
     repo = BakedGoodRepository()
     croissant_a = make_baked_good(1, "Croissant", "Bakery A", ["gluten"])
@@ -46,12 +46,12 @@ def test_find_by_name_and_vendor_filters_correctly():
     repo.add(croissant_a)
     repo.add(croissant_b)
 
-    assert repo.find_by_name("Croissant", "Bakery A") is croissant_a
-    assert repo.find_by_name("Croissant", "Bakery B") is croissant_b
-    assert repo.find_by_name("Croissant") is croissant_a
+    assert repo.get_by_name("Croissant", "Bakery A") is croissant_a
+    assert repo.get_by_name("Croissant", "Bakery B") is croissant_b
+    assert repo.get_by_name("Croissant") is croissant_a
 
 
-def test_find_by_vendor_and_allergen_returns_matching_items():
+def test_get_by_vendor_and_allergen_returns_matching_items():
     """Ensure repository filtering works for vendor and allergen queries."""
     repo = BakedGoodRepository()
     croissant = make_baked_good(1, "Croissant", "Bakery A", ["gluten"])
@@ -62,12 +62,12 @@ def test_find_by_vendor_and_allergen_returns_matching_items():
     repo.add(muffin)
     repo.add(cookie)
 
-    assert repo.find_by_vendor("Bakery A") == [croissant, muffin]
-    assert repo.find_by_allergen("gluten") == [croissant, cookie]
+    assert repo.get_by_vendor("Bakery A") == [croissant, muffin]
+    assert repo.get_by_allergen("gluten") == [croissant, cookie]
 
 
-def test_update_and_remove_change_repository_state():
-    """Ensure updates and removals affect the stored baked goods."""
+def test_update_and_delete_change_repository_state():
+    """Ensure updates and deletions affect the stored baked goods."""
     repo = BakedGoodRepository()
     croissant = make_baked_good(1, "Croissant", "Bakery A", ["gluten"])
     repo.add(croissant)
@@ -81,12 +81,12 @@ def test_update_and_remove_change_repository_state():
         markup_percentage=0.25,
     )
 
-    repo.update(updated)
-    assert repo.find_by_name("Croissant", "Bakery A") is updated
-    assert repo.find_by_name("Croissant", "Bakery A").allergens == ["gluten", "milk"]
+    repo.update("Croissant", "Bakery A", updated)
+    assert repo.get_by_name("Croissant", "Bakery A") is updated
+    assert repo.get_by_name("Croissant", "Bakery A").allergens == ["gluten", "milk"]
 
-    repo.remove("Croissant", "Bakery A")
-    assert repo.all() == []
+    repo.delete("Croissant", "Bakery A")
+    assert repo.get_all() == []
 
 
 def test_duplicate_add_raises_value_error():
