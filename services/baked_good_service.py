@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from models.baked_good import BakedGood
 from repositories.baked_good_repository import BakedGoodRepository
 
@@ -47,3 +49,31 @@ class BakedGoodService:
     def delete_baked_good(self, name: str, vendor_name: str) -> bool:
         """Delete a baked good by name and vendor."""
         return self.repository.delete(name, vendor_name)
+
+    def get_all_baked_goods(self) -> list[tuple[int, str, str, list[str], Decimal, Decimal]]:
+        """Return all baked goods as tuples for simple data access."""
+        return [
+            (
+                good.id,
+                good.name,
+                good.vendor_name,
+                good.allergens,
+                good.purchasing_cost,
+                good.markup_percentage,
+            )
+            for good in self.repository.get_all()
+        ]
+
+    def get_baked_good_by_name(self, name: str, vendor_name: str | None = None) -> tuple[int, str, str, list[str], Decimal, Decimal] | None:
+        """Return one baked good as a tuple, optionally scoped by vendor."""
+        good = self.repository.get_by_name(name, vendor_name)
+        if good is None:
+            return None
+        return (
+            good.id,
+            good.name,
+            good.vendor_name,
+            good.allergens,
+            good.purchasing_cost,
+            good.markup_percentage,
+        )
