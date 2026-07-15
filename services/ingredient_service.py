@@ -1,5 +1,6 @@
 from repositories.ingredient_repository import IngredientRepository
 from models.ingredient import Ingredient
+from exceptions import IngredientNotFound, DuplicateIngredientError
 from decimal import Decimal
 
 
@@ -28,7 +29,8 @@ class IngredientService:
                 name : str,
                 purchasing_cost : float | Decimal,
                 unit_amount : float,
-                unit_of_measure : str
+                unit_of_measure : str,
+                available: bool
             ):
         """
         Create a new ingredientand store it in the repository.
@@ -43,6 +45,8 @@ class IngredientService:
             The amount of the ingredient per unit.
         unit_of_measure : str
             The unit of measurement (e.g., 'grams', 'onces').
+        available : bool
+            The availability of the ingredient.
 
         Notes
         -----
@@ -51,9 +55,8 @@ class IngredientService:
         - Otherwise, a new sequential ID is assigned.
         """
 
-        """
-        Validation
-        """
+        if self._repository.get_by_name(name) is not None:
+            raise DuplicateIngredientError("An ingredient with the same name is already in the repository")
         created_ingredient_id = None
         if len(self._empty_ids) == 0:
             created_ingredient_id = self._next_id
@@ -66,7 +69,8 @@ class IngredientService:
                 name=name,
                 purchasing_cost=purchasing_cost,
                 unit_amount=unit_amount,
-                unit_of_measure=unit_of_measure
+                unit_of_measure=unit_of_measure,
+                available=available
             )
         self._repository.add(created_ingredient)
 
@@ -80,6 +84,17 @@ class IngredientService:
             A list of Ingredient objects.
         """
         return self._repository.get_all()
+    
+    def get_available_ingredients(self) -> list[Ingredient]:
+        """
+        Retrieve all ingredients that are available
+
+        Returns
+        -------
+        list[Ingredient]
+            A list of Ingredient objects that are available.
+        """
+        return [ingredient for ingredient in self._repository.get_all() if ingredient.available]
     
     def get_ingredient_by_name(self, name : str) -> Ingredient:
         """
@@ -102,7 +117,7 @@ class IngredientService:
         """
         returned_ingredient = self._repository.get_by_name(name)
         if returned_ingredient is None:
-            raise #ingredient not found
+            raise IngredientNotFound(f"No ingredient with name {name} was found in the repository")
         return returned_ingredient
     
     def update_ingredient(
@@ -110,7 +125,8 @@ class IngredientService:
                 name : str,
                 purchasing_cost : float | Decimal,
                 unit_amount : float,
-                unit_of_measure : str
+                unit_of_measure : str,
+                available : bool
             ):
         """
         Update an existing ingredient's stored attributes.
@@ -125,22 +141,24 @@ class IngredientService:
             The updated unit amount.
         unit_of_measure : str
             The updated unit of measurement.
+        available : bool
+            The updated status of the ingredient's availability.
 
         Raises
         ------
         LookupError
             If the ingredient does not exist in the repository.
         """
-        """
-        validation
-        """
-        old_ingredient_id = self._repository.get_by_name(name).id
+        old_ingredient = self._repository.get_by_name(name)
+        if old_ingredient is None:
+            raise IngredientNotFound(f"No ingredient with name {name} was found in the repository")
         updated_ingredient = Ingredient(
-            id=old_ingredient_id,
+            id=old_ingredient.id,
             name=name,
             purchasing_cost=purchasing_cost,
             unit_amount=unit_amount,
-            unit_of_measure=unit_of_measure
+            unit_of_measure=unit_of_measure,
+            available=available
         )
 
         self._repository.update(name, updated_ingredient)
@@ -163,9 +181,9 @@ class IngredientService:
         -----
         The deleted ingredient's ID is stored for reuse in future creations.
         """
-        """
-        Validation
-        """
-        self._empty_ids.append(self._repository.get_by_name(name).id)
+        deleted_ingredient = self._repository.get_by_name(name)
+        if deleted_ingredient is None:
+            raise IngredientNotFound(f"No ingredient with name {name} was found in the repository")
+        self._empty_ids.append(deleted_ingredient.id)
         self._repository.delete(name)
     
