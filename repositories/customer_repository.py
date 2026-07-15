@@ -3,28 +3,29 @@ Repository for managing Customer objects in memory.
 """
 
 from models.customer import Customer
+from collections import OrderedDict
 
 class CustomerRepository:
     """
     Provides CRUD operations for Customer objects stored in memory.
 
     Attributes:
-        _customers (list[Customer]): Interal list storing Customer instances.
+        _customers (OrderedDict[str, Customer]): Internal dictionary storing Customer instances with usernames as keys.
     """
     def __init__(self):
         """
         Initialize an empty CustomerRepository
         """
-        self._customers: list[Customer] = []
+        self._customers: OrderedDict[str, Customer] = OrderedDict()
 
     def get_all(self) -> list[Customer]:
         """
         Retrieve all Customer objects in the repository.
 
         Returns:
-            list[Customer]: A list of all stored ingredients.
+            list[Customer]: A list of all stored customers.
         """
-        return self._customers
+        return list(self._customers.values())
     
     def get_by_name(self, name : str) -> Customer | None:
         """

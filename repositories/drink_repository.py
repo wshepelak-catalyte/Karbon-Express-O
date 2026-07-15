@@ -1,5 +1,6 @@
 from numbers import Number
 from models.drink import Drink
+from collections import OrderedDict
 
 class DrinkRepository:
     """A repository for managing in-memory storage of Drink instances.
@@ -10,7 +11,7 @@ class DrinkRepository:
 
     def __init__(self):
         """Initializes an empty drink repository."""
-        self._drinks: list[Drink] = []
+        self._drinks: list[OrderedDict[str, Drink]] = []
 
     def get_all(self) -> list[Drink]:
         """Retrieves all drinks currently stored in the repository.
@@ -18,7 +19,7 @@ class DrinkRepository:
         Returns:
             list[Drink]: A list containing all managed Drink objects.
         """
-        return self._drinks
+        return [drink for drink_dict in self._drinks for drink in drink_dict.values()]
 
     def get_by_id(self, id: Number) -> Drink | None:
         """Finds a specific drink by its unique numerical identifier.
@@ -29,7 +30,7 @@ class DrinkRepository:
         Returns:
             Drink | None: The matching Drink object if found; otherwise, None.
         """
-        return next((d for d in self._drinks if d.id == id), None)
+        return next((d for drink_dict in self._drinks for d in drink_dict.values() if d.id == id), None)
 
     def get_by_name(self, name: str) -> Drink | None:
         """Finds a drink by its name (case-insensitive, trimmed).
@@ -43,7 +44,7 @@ class DrinkRepository:
         if name is None:
             return None
         lookup = name.strip().lower()
-        return next((d for d in self._drinks if isinstance(d.name, str) and d.name.strip().lower() == lookup), None)
+        return next((d for drink_dict in self._drinks for d in drink_dict.values() if isinstance(d.name, str) and d.name.strip().lower() == lookup), None)
 
     def add(self, drink: Drink) -> Drink:
         """Adds a new drink record to the repository.
@@ -54,7 +55,7 @@ class DrinkRepository:
         Returns:
             Drink: The Drink instance that was successfully added.
         """
-        self._drinks.append(drink)
+        self._drinks.append(OrderedDict([(drink.id, drink)]))
         return drink
 
     def update(self, id: Number, drink: Drink) -> Drink | None:
@@ -70,8 +71,9 @@ class DrinkRepository:
         """
         existing_drink = self.get_by_id(id)
         if existing_drink:
-            self._drinks.remove(existing_drink)
-            self._drinks.append(drink)
+            self._drinks.remove(OrderedDict([(existing_drink.id, existing_drink)]))
+            self._drinks.append(OrderedDict([(drink.id, drink)]))
+
             return drink
         return None
 
@@ -87,6 +89,7 @@ class DrinkRepository:
         """
         drink = self.get_by_id(id)
         if drink:
-            self._drinks.remove(drink)
+            self._drinks.remove(OrderedDict([(drink.id, drink)]))
+            
             return True
         return False
