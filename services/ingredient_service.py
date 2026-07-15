@@ -70,32 +70,18 @@ class IngredientService:
             )
         self._repository.add(created_ingredient)
 
-    def get_all_ingredients(self) -> list[tuple[int, str, float, float, str]]:
+    def get_all_ingredients(self) -> list[Ingredient]:
         """
         Retrieve all ingredients as structured tuples.
 
         Returns
         -------
-        list[tuple[int, str, float, float, str]]
-            A list of tuples, each containing:
-            - ingredient ID (int)
-            - ingredient name (str)
-            - purchasing cost (float)
-            - unit amount (float)
-            - unit of measure (str)
+        list[Ingredient]
+            A list of Ingredient objects.
         """
-        return [
-            (
-                ingredient.id,
-                ingredient.name,
-                float(str(ingredient.purchasing_cost)),
-                ingredient.unit_amount,
-                ingredient.unit_of_measure
-            )
-            for ingredient in self._repository.get_all()
-        ]
+        return self._repository.get_all()
     
-    def get_ingredient_by_name(self, name : str) -> tuple[int, str, float, float, str]:
+    def get_ingredient_by_name(self, name : str) -> Ingredient:
         """
         Retrieve a single ingredient by its name.
 
@@ -106,13 +92,8 @@ class IngredientService:
 
         Returns
         -------
-        tuple[int, str, float, float, str]
-            A tuple containing:
-            - ingredient ID (int)
-            - ingredient name (str)
-            - purchasing cost (float)
-            - unit amount (float)
-            - unit of measure (str)
+        Ingredient
+            The ingredient matching the provided name.
 
         Raises
         ------
@@ -122,13 +103,7 @@ class IngredientService:
         returned_ingredient = self._repository.get_by_name(name)
         if returned_ingredient is None:
             raise #ingredient not found
-        return (
-            returned_ingredient.id,
-            returned_ingredient.name,
-            float(str(returned_ingredient.purchasing_cost)),
-            returned_ingredient.unit_amount,
-            returned_ingredient.unit_of_measure,
-        )
+        return returned_ingredient
     
     def update_ingredient(
                 self, 
