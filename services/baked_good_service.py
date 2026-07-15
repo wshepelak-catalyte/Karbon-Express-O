@@ -7,6 +7,8 @@ class BakedGoodService:
 
     def __init__(self, repository: BakedGoodRepository) -> None:
         self.repository = repository
+        self._empty_ids: list[int] = []
+        self._next_id = 0
 
     def is_available(self, name: str, vendor_name: str) -> bool:
         """Return whether a baked good is currently available for sale."""
@@ -49,6 +51,9 @@ class BakedGoodService:
             raise ValueError(
                 f"Baked good '{baked_good.name}' for vendor '{baked_good.vendor_name}' already exists."
             )
+
+        if baked_good.id is None:
+            baked_good.id = self._next_available_id()
         return self.repository.add(baked_good)
 
     def update_baked_good(self, baked_good: BakedGood) -> BakedGood:
@@ -67,4 +72,16 @@ class BakedGoodService:
 
     def delete_baked_good(self, name: str, vendor_name: str) -> bool:
         """Delete a baked good by name and vendor."""
+        good = self.repository.get_by_name(name, vendor_name)
+        if good is None:
+            return False
+        self._empty_ids.append(good.id)
         return self.repository.delete(name, vendor_name)
+
+    def _next_available_id(self) -> int:
+        """Return the next reusable ID, or generate a new one if none are available."""
+        if self._empty_ids:
+            return self._empty_ids.pop()
+        new_id = self._next_id
+        self._next_id += 1
+        return new_id
