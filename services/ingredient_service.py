@@ -1,6 +1,4 @@
 from repositories.ingredient_repository import IngredientRepository
-from repositories.ingredient_availability_repository import IngredientAvailabilityRepository
-from repositories.drink_repository import DrinkRepository
 from models.ingredient import Ingredient
 from decimal import Decimal
 
@@ -8,13 +6,8 @@ from decimal import Decimal
 class IngredientService:
     """Service layer for ingredient availability and drink availability rules."""
 
-    def __init__(
-        self,
-        repository: IngredientRepository,
-        availability_repository: IngredientAvailabilityRepository,
-        drink_repository: DrinkRepository,
-    ):
-        self._repository = repository
+    def __init__(self):
+        self._repository = IngredientRepository()
         self._empty_ids = []
         self._next_id = 0
 
@@ -57,5 +50,3 @@ class IngredientService:
         else:
             return None
     
-    
->>>>>>> b4081b64c9b18090a23187f51ad6173090490730
