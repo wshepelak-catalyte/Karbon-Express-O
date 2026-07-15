@@ -1,5 +1,6 @@
 from repositories.ingredient_repository import IngredientRepository
 from models.ingredient import Ingredient
+from exceptions import IngredientNotFound, DuplicateIngredientError
 from decimal import Decimal
 
 
@@ -54,9 +55,8 @@ class IngredientService:
         - Otherwise, a new sequential ID is assigned.
         """
 
-        """
-        Validation
-        """
+        if self._repository.get_by_name(name) is not None:
+            raise DuplicateIngredientError("An ingredient with the same name is already in the repository")
         created_ingredient_id = None
         if len(self._empty_ids) == 0:
             created_ingredient_id = self._next_id
@@ -117,7 +117,7 @@ class IngredientService:
         """
         returned_ingredient = self._repository.get_by_name(name)
         if returned_ingredient is None:
-            raise #ingredient not found
+            raise IngredientNotFound(f"No ingredient with name {name} was found in the repository")
         return returned_ingredient
     
     def update_ingredient(
@@ -149,12 +149,11 @@ class IngredientService:
         LookupError
             If the ingredient does not exist in the repository.
         """
-        """
-        validation
-        """
-        old_ingredient_id = self._repository.get_by_name(name).id
+        old_ingredient = self._repository.get_by_name(name)
+        if old_ingredient is None:
+            raise IngredientNotFound(f"No ingredient with name {name} was found in the repository")
         updated_ingredient = Ingredient(
-            id=old_ingredient_id,
+            id=old_ingredient.id,
             name=name,
             purchasing_cost=purchasing_cost,
             unit_amount=unit_amount,
@@ -182,9 +181,9 @@ class IngredientService:
         -----
         The deleted ingredient's ID is stored for reuse in future creations.
         """
-        """
-        Validation
-        """
-        self._empty_ids.append(self._repository.get_by_name(name).id)
+        deleted_ingredient = self._repository.get_by_name(name)
+        if deleted_ingredient is None:
+            raise IngredientNotFound(f"No ingredient with name {name} was found in the repository")
+        self._empty_ids.append(deleted_ingredient.id)
         self._repository.delete(name)
     
