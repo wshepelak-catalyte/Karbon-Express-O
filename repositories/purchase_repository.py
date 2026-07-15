@@ -46,7 +46,7 @@ class PurchaseRepository:
         lookup = username.strip().lower()
         return [
             p for p in self._purchases.values() 
-            if isinstance(p.customer_username, str) and p.customer_username.strip().lower() == lookup
+            if p.customer and hasattr(p.customer, 'username') and isinstance(p.customer.username, str) and p.customer.username.strip().lower() == lookup
         ]
 
     def add(self, purchase: Purchase) -> Purchase:
