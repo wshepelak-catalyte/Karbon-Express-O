@@ -11,7 +11,7 @@ class IngredientRepository:
     Provides CRUD operations for Ingredient objects stored in memory.
 
     Attributes:
-        _ingredients (list[Ingredient]): Internal list storing Ingredient instances.
+        _ingredients (OrderedDict(Ingredient)): Internal list storing Ingredient instances.
     """
     def __init__(self):
         """

@@ -1,14 +1,34 @@
 from repositories.ingredient_repository import IngredientRepository
 from models.ingredient import Ingredient
+from decimal import Decimal
 
 
 class IngredientService:
 
     def __init__(self, repository : IngredientRepository):
         self._repository = repository
+        self._empty_ids = []
+        self._next_id = 0
 
-    def create_ingredient(self, ingredient : Ingredient):
-        pass
+    def create_ingredient(self, name : str, purchasing_cost : float | Decimal, unit_amount : float, unit_of_measure : str):
+        """
+        Validation
+        """
+        created_ingredient_id = None
+        if len(self._empty_ids) == 0:
+            created_ingredient_id = self._next_id
+            self._next_id += 1
+        else:
+            created_ingredient_id = self._empty_ids.pop()
+        
+        created_ingredient = Ingredient(
+                id=created_ingredient_id,
+                name=name,
+                purchasing_cost=purchasing_cost,
+                unit_amount=unit_amount,
+                unit_of_measure=unit_of_measure
+            )
+        self._repository.add(created_ingredient)
 
     def get_all_ingredients(self) -> list[Ingredient]:
         return self._repository.get_all()
