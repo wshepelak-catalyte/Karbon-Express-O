@@ -1,6 +1,8 @@
 import re
 from dataclasses import dataclass
+from decimal import Decimal
 from repositories.customer_repository import CustomerRepository
+from models.purchase import Purchase
 from models.customer import Customer
 from exceptions import DuplicateCustomerError, InvalidEmailError
 
@@ -15,56 +17,109 @@ class ValidationResult:
 class CustomerService:
     def __init__(self, repository: CustomerRepository):
         self._repository = repository
+        self._empty_ids = []
+        self._next_id = 0
 
     def validate_email_format(self, email: str) -> bool:
         """Validates that customer email follows a proper format"""
         return re.fullmatch(EMAIL_PATTERN, email) is not None
-
-    def is_email_taken(self, email: str, exclude_id: int | None = None) -> bool:
-        """Return True when another customer already uses the same email."""
-        normalized_email = email.strip().lower()
+    
+    def is_unique_email(self, email : str):
+        is_unique = True
         for customer in self._repository.get_all():
-            if customer.email.lower() != normalized_email:
-                continue
-            if exclude_id is not None and customer.id == exclude_id:
-                continue
-            return True
-        return False
-
+            if customer.email == email:
+                is_unique = False
+        return is_unique
+    
     def is_unique_username(self, username: str) -> bool:
-        return self._repository.get_by_username(username) is None
+        is_unique = True
+        for customer in self._repository.get_all():
+            if customer.username == username:
+                is_unique = False
+        return is_unique
 
-    def validate_customer_signup(self, customer: Customer) -> ValidationResult:
-        if not self.validate_email_format(customer.email):
-            return ValidationResult(
-                valid=False,
-                code="invalid_email",
-                message="Invalid email format. Please use a valid email address like user@example.com."
-            )
+    def create_customer(
+                self,
+                name : str,
+                email : str,
+                phone : str,
+                username : str,
+                lifetime_spend : float | Decimal,
+                purchases : list[Purchase]
+            ):
+        if self._repository.get_by_name(name) is not None:
+            raise DuplicateCustomerError("A customer with the same name is already in the repository")
+        if not self.is_unique_email(email):
+            raise DuplicateCustomerError("A customer with the same email already exists")
+        if not self.is_unique_username(username):
+            raise DuplicateCustomerError("A customer with the same username already exists")
+        
+        created_customer_id = None
+        if len(self._empty_ids) == 0:
+            created_customer_id = self._next_id
+            self._next_id += 1
+        else:
+            created_customer_id = self._empty_ids.pop()
 
-        if not self.is_unique_username(customer.username):
-            return ValidationResult(
-                valid=False,
-                code="duplicate_username",
-                message=f"Username '{customer.username}' is already taken. Please choose a different username."
-            )
+        created_customer = Customer(
+            id=created_customer_id,
+            name=name,
+            email=email,
+            phone=phone,
+            username=username,
+            lifetime_spend=lifetime_spend,
+            purchases=purchases
+        )
+        self._repository.add(created_customer)
 
-        if self.is_email_taken(customer.email):
-            return ValidationResult(
-                valid=False,
-                code="duplicate_email",
-                message=f"Email '{customer.email}' is already registered. Please use a different email address."
-            )
+    def get_all_customers(self) -> list[Customer]:
+        return self._repository.get_all()
+        
+    def get_customer_by_name(self, name : str) -> Customer:
+        returned_customer = self._repository.get_by_name(name)
+        if returned_customer is None:
+            raise CustomerNotFound(f"No Customer with name {name} was found in the repository")
+        return returned_customer
+    
+    def get_customer_by_email(self, email : str) -> Customer:
+        for customer in self._repository.get_all():
+            if customer.email == email:
+                return customer
+        raise CustomerNotFound(f"No Customer with the email {email} was found in the repository")
 
-        return ValidationResult(valid=True)
+    def get_customer_by_username(self, username : str) -> Customer:
+        for customer in self._repository.get_all():
+            if customer.username == username:
+                return customer
+        raise CustomerNotFound(f"No Customer with the username {username} was found in the repository")
 
-    def create_customer(self, customer: Customer) -> Customer:
-        validation = self.validate_customer_signup(customer)
-        if not validation.valid:
-            if validation.code == "invalid_email":
-                raise InvalidEmailError(validation.message)
-            if validation.code in {"duplicate_username", "duplicate_email"}:
-                raise DuplicateCustomerError(validation.message)
-            raise ValueError(validation.message or "Invalid customer signup data.")
+    def update_customer(
+                self,
+                name : str,
+                email : str,
+                phone : str,
+                username : str,
+                lifetime_spend : float | Decimal,
+                purchases : list[Purchase]
+            ):
+        old_customer = self._repository.get_by_name(name)
+        if old_customer is None:
+            raise CustomerNotFound(f"No Customer with name {name} was found in the repository")
+        updated_customer = Customer(
+            id=old_customer.id,
+            name=name,
+            email=email,
+            phone=phone,
+            username=username,
+            lifetime_spend=lifetime_spend,
+            purchases=purchases
+        )
 
-        return self._repository.add(customer)
+        self._repository.update(name, updated_customer)
+
+    def delete_customer(self, name : str):
+        deleted_customer = self._repository.get_by_name(name)
+        if deleted_customer is None:
+            raise CustomerNotFound(f"No customer with name {name} was found in the repository")
+        self._empty_ids.append(deleted_customer.id)
+        self._repository.delete(name)
