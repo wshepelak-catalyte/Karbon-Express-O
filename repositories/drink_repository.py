@@ -55,41 +55,41 @@ class DrinkRepository:
         Returns:
             Drink: The Drink instance that was successfully added.
         """
-        self._drinks.append(OrderedDict([(drink.id, drink)]))
+        self._drinks.append(OrderedDict([(drink.name, drink)]))
         return drink
 
-    def update(self, id: Number, drink: Drink) -> Drink | None:
+    def update(self, name: str, drink: Drink) -> Drink | None:
         """Replaces an existing drink record with updated information.
 
         Args:
-            id (Number): The numeric ID of the drink to update.
+            name (str): The name of the drink to update.
             drink (Drink): The new Drink instance to replace the old record.
 
         Returns:
             Drink | None: The updated Drink instance if the target ID was found
                 and replaced; otherwise, None.
         """
-        existing_drink = self.get_by_id(id)
+        existing_drink = self.get_by_name(name)
         if existing_drink:
-            self._drinks.remove(OrderedDict([(existing_drink.id, existing_drink)]))
-            self._drinks.append(OrderedDict([(drink.id, drink)]))
+            self._drinks.remove(OrderedDict([(existing_drink.name, existing_drink)]))
+            self._drinks.append(OrderedDict([(drink.name, drink)]))
 
             return drink
         return None
 
-    def delete(self, id: Number) -> bool:
-        """Removes a drink record from the repository by its ID.
+    def delete(self, name: str) -> bool:
+        """Removes a drink record from the repository by its name.
 
         Args:
-            id (Number): The numeric ID of the drink to remove.
+            name (str): The name of the drink to remove.
 
         Returns:
             bool: True if the drink was found and successfully deleted; False
                 if no matching record was found.
         """
-        drink = self.get_by_id(id)
+        drink = self.get_by_name(name)
         if drink:
-            self._drinks.remove(OrderedDict([(drink.id, drink)]))
+            self._drinks.remove(OrderedDict([(drink.name, drink)]))
             
             return True
         return False
