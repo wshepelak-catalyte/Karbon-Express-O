@@ -44,7 +44,7 @@ class DrinkRepository:
         Returns:
             Drink: The Drink instance that was successfully added.
         """
-        self._drink[drink.name] = drink
+        self._drinks[drink.name] = drink
         return drink
 
     def update(self, name: str, drink: Drink) -> Drink | None:
@@ -65,7 +65,7 @@ class DrinkRepository:
         self._drinks[name] = drink
         return drink
 
-    def delete(self, id: Number) -> bool:
+    def delete(self, name: str) -> bool:
         """Removes a drink record from the repository by its ID.
 
         Args:
@@ -75,9 +75,8 @@ class DrinkRepository:
             bool: True if the drink was found and successfully deleted; False
                 if no matching record was found.
         """
-        drink = self.get_by_id(id)
-        if drink:
-            self._drinks.remove(OrderedDict([(drink.id, drink)]))
-            
-            return True
-        return False
+        drink = self.get_by_name(name)
+        if drink is None:
+            return False
+        del self._drinks[name]
+        return True
