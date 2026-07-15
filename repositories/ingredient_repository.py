@@ -26,10 +26,7 @@ class IngredientRepository:
         Returns:
             list[Ingredient]: A list of all stored ingredients.
         """
-        return_list = []
-        for key, val in self._ingredients.items():
-            return_list.append(val)
-        return return_list
+        return list(self._ingredients.values())
     
     def get_by_name(self, name: str) -> Ingredient | None:
         """
@@ -41,7 +38,7 @@ class IngredientRepository:
         Returns:
             Ingredient | None: The matching Ingredient, or None if not found.
         """
-        return next((i for i in self._ingredients if i.name == name), None)
+        return self._ingredients.get(name)
     
     def add(self, ingredient : Ingredient) -> Ingredient:
         """
