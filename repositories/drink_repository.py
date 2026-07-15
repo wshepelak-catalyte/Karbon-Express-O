@@ -59,7 +59,7 @@ class DrinkRepository:
                 and replaced; otherwise, None.
         """
         
-        if self._drinks.get[name] is None:
+        if self._drinks.get(name) is None:
             return None
         
         self._drinks[name] = drink
