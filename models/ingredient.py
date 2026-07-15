@@ -50,7 +50,7 @@ class Ingredient:
         result_string += f"   Name: {self.name}\n"
         result_string += f"   Purchasing Cost: {str(self.purchasing_cost)}\n"
         result_string += f"   Unit Amount: {str(self.unit_amount)}\n"
-        result_string += f"   Unit of Measure: {self.unit_of_measure}"
+        result_string += f"   Unit of Measure: {self.unit_of_measure}\n"
         result_string += f"   Available: {"True" if self.available else "False"}"
 
         return result_string

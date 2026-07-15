@@ -16,4 +16,15 @@ class InvalidEmailError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
+class DuplicateIngredientError(Exception):
+    """Exception raised when attempting to create a duplicate ingredient."""
+
+    def __init__(self, message : str):
+        super().__init__(message)
+
+class IngredientNotFound(Exception):
+    """Exception raised when attemption to get an ingredient that does not exist."""
+
+    def __init__(self, message : str):
+        super().__init__(message)
 
