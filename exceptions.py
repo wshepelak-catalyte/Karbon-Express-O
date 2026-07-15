@@ -40,4 +40,8 @@ class ItemNotFoundError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
-        
+class DrinkNotFoundError(Exception):       
+    """Exception raised when a drink is not found in the repository."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
