@@ -1,5 +1,6 @@
+from models import drink
 from models.purchase import Purchase
-from numbers import Number
+from collections import OrderedDict
 
 class PurchaseRepository:
     """A repository for managing in-memory storage of Purchase records.
@@ -10,7 +11,7 @@ class PurchaseRepository:
 
     def __init__(self):
         """Initializes an empty purchase repository."""
-        self._purchases: list[Purchase] = []
+        self._purchases = OrderedDict()
 
     def get_all(self) -> list[Purchase]:
         """Retrieves all purchase transactions currently stored in the repository.
@@ -18,19 +19,19 @@ class PurchaseRepository:
         Returns:
             list[Purchase]: A list containing all managed Purchase objects.
         """
-        return self._purchases
+        return list(self._purchases.values())
 
-    def get_by_id(self, id: Number) -> Purchase | None:
+    def get_by_id(self, id: int) -> Purchase | None:
         """Finds a specific purchase record by its unique numerical identifier.
 
         Args:
-            id (Number): The numeric ID of the purchase transaction to look up.
+            id (int): The numeric ID of the purchase transaction to look up.
 
         Returns:
             Purchase | None: The matching Purchase object if found; otherwise, None.
         """
-        return next((p for p in self._purchases if p.id == id), None)
-
+        return self._purchases.get(id)
+    
     def get_by_customer_username(self, username: str) -> list[Purchase]:
         """Retrieve all purchases associated with a given customer username."""
         if username is None:
@@ -52,23 +53,23 @@ class PurchaseRepository:
         Returns:
             Purchase: The Purchase instance that was successfully added.
         """
-        self._purchases.append(purchase)
+        self._purchases[purchase.id] = purchase
         return purchase
 
-    def update(self, id: Number, purchase: Purchase) -> Purchase | None:
+    def update(self, id: int, purchase: Purchase) -> Purchase | None:
         """Replaces an existing purchase transaction with updated information.
 
         Args:
-            id (Number): The numeric ID of the purchase record to update.
+            id (int): The numeric ID of the purchase record to update.
             purchase (Purchase): The new Purchase instance to replace the old record.
 
         Returns:
             Purchase | None: The updated Purchase instance if the target ID was found
                 and replaced; otherwise, None.
         """
-        existing_purchase = self.get_by_id(id)
-        if existing_purchase:
-            self._purchases.remove(existing_purchase)
-            self._purchases.append(purchase)
-            return purchase
-        return None
+        if self._purchases.get(id) is None:
+            return None
+        self._purchases[id] = purchase
+        return purchase
+    
+    
