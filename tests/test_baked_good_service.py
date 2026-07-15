@@ -69,3 +69,21 @@ def test_update_baked_good_raises_when_target_does_not_exist():
 
     with pytest.raises(ValueError):
         service.update_baked_good(make_baked_good(1, "Croissant", "Bakery A"))
+
+
+def test_baked_good_defaults_to_available_and_can_be_toggled():
+    repository = BakedGoodRepository()
+    service = BakedGoodService(repository)
+    good = make_baked_good(1, "Croissant", "Bakery A")
+    repository.add(good)
+
+    assert good.available is True
+    assert service.is_available("Croissant", "Bakery A") is True
+
+    service.mark_unavailable("Croissant", "Bakery A")
+    assert good.available is False
+    assert service.is_available("Croissant", "Bakery A") is False
+
+    service.mark_available("Croissant", "Bakery A")
+    assert good.available is True
+    assert service.is_available("Croissant", "Bakery A") is True

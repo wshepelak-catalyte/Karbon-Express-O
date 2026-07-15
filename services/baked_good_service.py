@@ -8,6 +8,27 @@ class BakedGoodService:
     def __init__(self, repository: BakedGoodRepository) -> None:
         self.repository = repository
 
+    def is_available(self, name: str, vendor_name: str) -> bool:
+        """Return whether a baked good is currently available for sale."""
+        good = self.repository.get_by_name(name, vendor_name)
+        return good is not None and good.available
+
+    def mark_unavailable(self, name: str, vendor_name: str) -> BakedGood:
+        """Mark a baked good as unavailable."""
+        good = self.repository.get_by_name(name, vendor_name)
+        if good is None:
+            raise ValueError(f"Baked good '{name}' for vendor '{vendor_name}' not found.")
+        good.available = False
+        return good
+
+    def mark_available(self, name: str, vendor_name: str) -> BakedGood:
+        """Mark a baked good as available."""
+        good = self.repository.get_by_name(name, vendor_name)
+        if good is None:
+            raise ValueError(f"Baked good '{name}' for vendor '{vendor_name}' not found.")
+        good.available = True
+        return good
+
     def is_name_taken(self, name: str, vendor_name: str, exclude_id: int | None = None) -> bool:
         """Return True when another baked good already uses the same name for that vendor."""
         normalized_name = name.strip().lower()
