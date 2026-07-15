@@ -15,7 +15,10 @@ class BakedGoodRepository:
 
     def get_all(self) -> list[BakedGood]:
         """Return all baked goods."""
-        return list(self._goods.values())
+        return_list = []
+        for key, val in self._goods.items():
+            return_list.append(val)
+        return return_list
 
     def find_by_name(self, name: str, vendor_name: str | None = None) -> BakedGood | None:
         """Find a baked good by name, optionally filtering by vendor."""
