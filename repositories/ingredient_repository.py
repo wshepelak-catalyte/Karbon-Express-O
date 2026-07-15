@@ -3,6 +3,8 @@ Repository for managing Ingredient objects in memory.
 """
 
 from models.ingredient import Ingredient
+from collections import OrderedDict
+
 
 class IngredientRepository:
     """
@@ -15,7 +17,7 @@ class IngredientRepository:
         """
         Initialize an empty IngredientRepository
         """
-        self._ingredients: list[Ingredient] = []
+        self._ingredients = OrderedDict()
 
     def get_all(self)->list[Ingredient]:
         """
@@ -24,7 +26,10 @@ class IngredientRepository:
         Returns:
             list[Ingredient]: A list of all stored ingredients.
         """
-        return self._ingredients
+        return_list = []
+        for key, val in self._ingredients.items():
+            return_list.append(val)
+        return return_list
     
     def get_by_name(self, name: str) -> Ingredient | None:
         """
@@ -48,7 +53,7 @@ class IngredientRepository:
         Returns:
             Ingredient: The added ingredient.
         """
-        self._ingredients.append(ingredient)
+        self._ingredients[ingredient.name] = ingredient
         return ingredient
 
     def update(self, name : str, ingredient : Ingredient) -> Ingredient | None:
@@ -62,12 +67,10 @@ class IngredientRepository:
         Returns:
             Ingredient | None: The updated ingredient, or None if not found.
         """
-        for iterator, _ingredient in enumerate(self._ingredients):
-            if _ingredient.name == name:
-                self._ingredients[iterator] = ingredient
-                return ingredient
-            
-        return None
+        if self._ingredients.get(name) is None:
+            return None
+        self._ingredients[name] = ingredient
+        return ingredient
 
     def delete(self, name: str) -> bool:
         """
@@ -79,9 +82,7 @@ class IngredientRepository:
         Returns:
             bool: True if deletion occurred, False otherwise.
         """
-        delete_occured = False
-        for iterator, _ingredient in enumerate(self._ingredients):
-            if _ingredient.name == name:
-                del self._ingredients[iterator]
-                delete_occured = True
-        return delete_occured
+        if self._ingredients.get(name) is None:
+            return False
+        del self._ingredients[name]
+        return True
