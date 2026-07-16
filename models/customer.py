@@ -28,7 +28,7 @@ class Customer:
     email: str
     phone: str
     username: str
-    lifetime_spend: float | Decimal
+    lifetime_spend: Decimal
     purchases: list["Purchase"] = field(default_factory=list)
 
     def __post_init__(self):
