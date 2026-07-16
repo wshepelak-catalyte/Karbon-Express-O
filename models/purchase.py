@@ -21,4 +21,5 @@ class Purchase:
     customer: Customer
 
     def __post_init__(self):
-        self.timestamp = datetime.now(timezone.utc)
+        if self.timestamp is None:
+            self.timestamp = datetime.now(timezone.utc)
