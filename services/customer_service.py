@@ -4,15 +4,9 @@ from decimal import Decimal
 from repositories.customer_repository import CustomerRepository
 from models.purchase import Purchase
 from models.customer import Customer
-from exceptions import DuplicateCustomerError, InvalidEmailError
+from exceptions import DuplicateCustomerError, CustomerNotFoundError, InvalidEmailFormat
 
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]{1,30}@[A-Za-z0-9.-]{1,30}\.[A-Za-z]{2,15}$")
-
-@dataclass
-class ValidationResult:
-    valid: bool
-    code: str | None = None
-    message: str | None = None
 
 class CustomerService:
     def __init__(self, repository: CustomerRepository):
@@ -49,6 +43,8 @@ class CustomerService:
             ):
         if self._repository.get_by_name(name) is not None:
             raise DuplicateCustomerError("A customer with the same name is already in the repository")
+        if not self.validate_email_format(email):
+            raise InvalidEmailFormat("The email provided is not formated correctly")
         if not self.is_unique_email(email):
             raise DuplicateCustomerError("A customer with the same email already exists")
         if not self.is_unique_username(username):
@@ -71,6 +67,7 @@ class CustomerService:
             purchases=purchases
         )
         self._repository.add(created_customer)
+        return created_customer
 
     def get_all_customers(self) -> list[Customer]:
         return self._repository.get_all()
@@ -78,20 +75,20 @@ class CustomerService:
     def get_customer_by_name(self, name : str) -> Customer:
         returned_customer = self._repository.get_by_name(name)
         if returned_customer is None:
-            raise CustomerNotFound(f"No Customer with name {name} was found in the repository")
+            raise CustomerNotFoundError(f"No Customer with name {name} was found in the repository")
         return returned_customer
     
     def get_customer_by_email(self, email : str) -> Customer:
         for customer in self._repository.get_all():
             if customer.email == email:
                 return customer
-        raise CustomerNotFound(f"No Customer with the email {email} was found in the repository")
+        raise CustomerNotFoundError(f"No Customer with the email {email} was found in the repository")
 
     def get_customer_by_username(self, username : str) -> Customer:
         for customer in self._repository.get_all():
             if customer.username == username:
                 return customer
-        raise CustomerNotFound(f"No Customer with the username {username} was found in the repository")
+        raise CustomerNotFoundError(f"No Customer with the username {username} was found in the repository")
 
     def update_customer(
                 self,
@@ -104,7 +101,18 @@ class CustomerService:
             ):
         old_customer = self._repository.get_by_name(name)
         if old_customer is None:
-            raise CustomerNotFound(f"No Customer with name {name} was found in the repository")
+            raise CustomerNotFoundError(f"No Customer with name {name} was found in the repository")
+        
+        for customer in self._repository.get_all():
+            if customer.id != old_customer.id:
+                if customer.username == username:
+                    raise DuplicateCustomerError("A customer with the same username already exists")
+                if customer.email == email: 
+                    raise DuplicateCustomerError("A customer with the same email already exists")
+        
+        if not self.validate_email_format(email):
+            raise InvalidEmailFormat("The email provided is not formated correctly")
+        
         updated_customer = Customer(
             id=old_customer.id,
             name=name,
@@ -120,6 +128,6 @@ class CustomerService:
     def delete_customer(self, name : str):
         deleted_customer = self._repository.get_by_name(name)
         if deleted_customer is None:
-            raise CustomerNotFound(f"No customer with name {name} was found in the repository")
+            raise CustomerNotFoundError(f"No customer with name {name} was found in the repository")
         self._empty_ids.append(deleted_customer.id)
         self._repository.delete(name)

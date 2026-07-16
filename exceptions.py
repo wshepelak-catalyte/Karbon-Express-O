@@ -4,22 +4,28 @@ class DuplicateDrinkError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
+class DrinkNotFoundError(Exception):       
+    """Exception raised when a drink is not found in the repository."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
 class DuplicateCustomerError(Exception):
     """Exception raised when attempting to create a duplicate customer."""
 
     def __init__(self, message: str):
         super().__init__(message)
 
-class InvalidEmailError(Exception):
-    """Exception raised when email validation fails."""
+class CustomerNotFoundError(Exception):
+    """Exception raised when a customer is not found in the repository"""
 
-    def __init__(self, message: str):
+    def __init__(self, message : str):
         super().__init__(message)
 
-class DuplicateUsernameError(Exception):
-    """Exception raised when attempting to create a duplicate username."""
+class InvalidEmailFormat(Exception):
+    """Exception raised when a provided email does not match the proper format."""
 
-    def __init__(self, message: str):
+    def __init__(self, message : str):
         super().__init__(message)
 
 class DuplicatebakedgoodError(Exception):
@@ -28,20 +34,20 @@ class DuplicatebakedgoodError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
 
+class BakedGoodNotFoundError(Exception):
+    """Exception raised when a baked good is not found in the repository."""
+
+    def __init__(self, message : str):
+        super().__init__(message)
+
 class DuplicateIngredientError(Exception):
     """Exception raised when attempting to create a duplicate ingredient."""
 
     def __init__(self, message: str):
         super().__init__(message)
 
-class ItemNotFoundError(Exception):
-    """Exception raised when an item is not found in the repository."""
+class IngredientNotFound(Exception):
+    """Exception raised when an ingredient is not found in the repository."""
 
-    def __init__(self, message: str):
-        super().__init__(message)
-
-class DrinkNotFoundError(Exception):       
-    """Exception raised when a drink is not found in the repository."""
-
-    def __init__(self, message: str):
+    def __init__(self, message : str):
         super().__init__(message)

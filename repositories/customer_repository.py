@@ -16,7 +16,7 @@ class CustomerRepository:
         """
         Initialize an empty CustomerRepository
         """
-        self._customers: OrderedDict[str, Customer] = OrderedDict()
+        self._customers = OrderedDict()
 
     def get_all(self) -> list[Customer]:
         """
@@ -37,10 +37,7 @@ class CustomerRepository:
         Returns:
             Customer | None: The matching Customer, or None if no customer is found.
         """
-        if name is None:
-            return None
-        lookup = name.strip().lower()
-        return next((c for c in self._customers if isinstance(c.name, str) and c.name.strip().lower() == lookup), None)
+        return self._customers.get(name)
 
     def get_by_username(self, username : str) -> Customer | None:
         """
@@ -82,7 +79,7 @@ class CustomerRepository:
         Returns:
             Customer: The added customer.
         """
-        self._customers.append(customer)
+        self._customers[customer.name] = customer
         return customer
     
     def update(self, name : str, customer : Customer) -> Customer | None:
@@ -96,12 +93,10 @@ class CustomerRepository:
         Returns:
             Customer | None: The updated customer, or non if no customer is found.
         """
-        for iterator, _customer in enumerate(self._customers):
-            if _customer.name == name:
-                self._customers[iterator] = customer
-                return customer
-        
-        return None
+        if self._customers.get(name) is None:
+            return None
+        self._customers[name] = customer
+        return customer
     
     def delete(self, name : str) -> bool:
         """
@@ -113,9 +108,7 @@ class CustomerRepository:
         Returns:
             bool: True if deletion occurred, False otherwise.
         """
-        delete_occured = False
-        for iterator, _customer in enumerate(self._customers):
-            if _customer.name == name:
-                del self._customers[iterator]
-                delete_occured = True
-        return delete_occured
+        if self._customers.get(name) is None:
+            return False
+        del self._customers[name]
+        return True
