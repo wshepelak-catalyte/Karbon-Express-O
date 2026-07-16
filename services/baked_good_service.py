@@ -1,5 +1,6 @@
 from models.baked_good import BakedGood
 from repositories.baked_good_repository import BakedGoodRepository
+from exceptions import DuplicatebakedgoodError, BakedGoodNotFoundError
 
 
 class BakedGoodService:
@@ -19,7 +20,7 @@ class BakedGoodService:
         """Mark a baked good as unavailable."""
         good = self.repository.get_by_name(name, vendor_name)
         if good is None:
-            raise ValueError(f"Baked good '{name}' for vendor '{vendor_name}' not found.")
+            raise BakedGoodNotFoundError(f"Baked good '{name}' for vendor '{vendor_name}' not found.")
         good.available = False
         return good
 
@@ -27,7 +28,7 @@ class BakedGoodService:
         """Mark a baked good as available."""
         good = self.repository.get_by_name(name, vendor_name)
         if good is None:
-            raise ValueError(f"Baked good '{name}' for vendor '{vendor_name}' not found.")
+            raise BakedGoodNotFoundError(f"Baked good '{name}' for vendor '{vendor_name}' not found.")
         good.available = True
         return good
 
@@ -48,7 +49,7 @@ class BakedGoodService:
     def add_baked_good(self, baked_good: BakedGood) -> BakedGood:
         """Add a baked good after validating that the name/vendor combination is unique."""
         if self.is_name_taken(baked_good.name, baked_good.vendor_name):
-            raise ValueError(
+            raise DuplicatebakedgoodError(
                 f"Baked good '{baked_good.name}' for vendor '{baked_good.vendor_name}' already exists."
             )
 
@@ -60,12 +61,12 @@ class BakedGoodService:
         """Update a baked good after validating that the name/vendor combination is still unique."""
         existing = self.repository.get_by_name(baked_good.name, baked_good.vendor_name)
         if existing is not None and existing.id != baked_good.id:
-            raise ValueError(
+            raise DuplicatebakedgoodError(
                 f"Baked good '{baked_good.name}' for vendor '{baked_good.vendor_name}' already exists."
             )
         updated = self.repository.update(baked_good.name, baked_good.vendor_name, baked_good)
         if updated is None:
-            raise ValueError(
+            raise BakedGoodNotFoundError(
                 f"Baked good '{baked_good.name}' for vendor '{baked_good.vendor_name}' not found."
             )
         return updated

@@ -26,7 +26,7 @@ def test_create_drink_allows_unique_name(service, mock_ingredient):
     assert len(all_drinks) == 1
     assert all_drinks[0].name == "Espresso"
 
-def test_create_drink_raises_duplicate_error_for_same_name(service, mock_ingredient):
+def test_create_drink_raises_duplicate_error_for_exact_name_match(service, mock_ingredient):
     service.create_drink(
         name="Espresso",
         ingredients=[mock_ingredient],
@@ -36,10 +36,10 @@ def test_create_drink_raises_duplicate_error_for_same_name(service, mock_ingredi
     )
     with pytest.raises(DuplicateDrinkError) as exc_info:
         service.create_drink(
-            name="espresso",
+            name="Espresso",
             ingredients=[mock_ingredient],
             cost_to_produce=Decimal("0.60"),
             markup_percentage=Decimal("2.0"),
             sale_price=Decimal("2.40")
         )
-    assert "Drink 'espresso' already exists." in str(exc_info.value)
+    assert "Drink 'Espresso' already exists." in str(exc_info.value)

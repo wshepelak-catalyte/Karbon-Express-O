@@ -1,4 +1,3 @@
-from numbers import Number
 from models.drink import Drink
 from collections import OrderedDict
 
@@ -11,7 +10,7 @@ class DrinkRepository:
 
     def __init__(self):
         """Initializes an empty drink repository."""
-        self._drinks = OrderedDict()
+        self._drinks: OrderedDict[int, Drink] = OrderedDict()
 
     def get_all(self) -> list[Drink]:
         """Retrieves all drinks currently stored in the repository.
@@ -23,6 +22,10 @@ class DrinkRepository:
 
    
 
+    def get_by_id(self, id: int) -> Drink | None:
+        """Find a drink by ID."""
+        return self._drinks.get(id)
+
     def get_by_name(self, name: str) -> Drink | None:
         """Finds a drink by its name (case-insensitive, trimmed).
 
@@ -32,8 +35,13 @@ class DrinkRepository:
         Returns:
             Drink | None: The matching Drink object if found; otherwise, None.
         """
-       
-        return self._drinks.get(name)
+        if name is None:
+            return None
+        lookup = name.strip().lower()
+        for drink in self._drinks.values():
+            if drink.name.strip().lower() == lookup:
+                return drink
+        return None
 
     def add(self, drink: Drink) -> Drink:
         """Adds a new drink record to the repository.
@@ -44,10 +52,10 @@ class DrinkRepository:
         Returns:
             Drink: The Drink instance that was successfully added.
         """
-        self._drinks[drink.name] = drink
+        self._drinks[drink.id] = drink
         return drink
 
-    def update(self, name: str, drink: Drink) -> Drink | None:
+    def update(self, key: int | str, drink: Drink) -> Drink | None:
         """Replaces an existing drink record with updated information.
 
         Args:
@@ -59,13 +67,20 @@ class DrinkRepository:
                 and replaced; otherwise, None.
         """
         
-        if self._drinks.get(name) is None:
+        existing: Drink | None
+        if isinstance(key, int):
+            existing = self.get_by_id(key)
+        else:
+            existing = self.get_by_name(key)
+
+        if existing is None:
             return None
-        
-        self._drinks[name] = drink
+
+        del self._drinks[existing.id]
+        self._drinks[drink.id] = drink
         return drink
 
-    def delete(self, name: str) -> bool:
+    def delete(self, key: int | str) -> bool:
         """Removes a drink record from the repository by its ID.
 
         Args:
@@ -75,8 +90,12 @@ class DrinkRepository:
             bool: True if the drink was found and successfully deleted; False
                 if no matching record was found.
         """
-        drink = self.get_by_name(name)
+        if isinstance(key, int):
+            drink = self.get_by_id(key)
+        else:
+            drink = self.get_by_name(key)
+
         if drink is None:
             return False
-        del self._drinks[name]
+        del self._drinks[drink.id]
         return True

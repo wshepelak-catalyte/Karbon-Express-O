@@ -5,6 +5,7 @@ import pytest
 from models.baked_good import BakedGood
 from repositories.baked_good_repository import BakedGoodRepository
 from services.baked_good_service import BakedGoodService
+from exceptions import DuplicatebakedgoodError, BakedGoodNotFoundError
 
 
 def make_baked_good(id_value: int, name: str, vendor_name: str) -> BakedGood:
@@ -49,7 +50,7 @@ def test_add_baked_good_raises_for_duplicate_name_and_vendor():
     service = BakedGoodService(repository)
     service.add_baked_good(make_baked_good(1, "Croissant", "Bakery A"))
 
-    with pytest.raises(ValueError):
+    with pytest.raises(DuplicatebakedgoodError):
         service.add_baked_good(make_baked_good(2, "Croissant", "Bakery A"))
 
 
@@ -59,7 +60,7 @@ def test_update_baked_good_raises_for_conflicting_name_and_vendor():
     existing = make_baked_good(1, "Croissant", "Bakery A")
     repository.add(existing)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(DuplicatebakedgoodError):
         service.update_baked_good(make_baked_good(2, "Croissant", "Bakery A"))
 
 
@@ -67,7 +68,7 @@ def test_update_baked_good_raises_when_target_does_not_exist():
     repository = BakedGoodRepository()
     service = BakedGoodService(repository)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(BakedGoodNotFoundError):
         service.update_baked_good(make_baked_good(1, "Croissant", "Bakery A"))
 
 
