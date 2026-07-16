@@ -1,6 +1,7 @@
 from models.purchase import Purchase
 from collections import OrderedDict
 
+
 class PurchaseRepository:
     """A repository for managing in-memory storage of Purchase records.
 
@@ -10,7 +11,7 @@ class PurchaseRepository:
 
     def __init__(self):
         """Initializes an empty purchase repository."""
-        self._purchases: OrderedDict[int, Purchase] = OrderedDict()
+        self._purchases = OrderedDict()
 
     def get_all(self) -> list[Purchase]:
         """Retrieves all purchase transactions currently stored in the repository.
@@ -30,24 +31,6 @@ class PurchaseRepository:
             Purchase | None: The matching Purchase object if found; otherwise, None.
         """
         return self._purchases.get(id)
-
-    def get_by_customer_username(self, username: str) -> list[Purchase]:
-        """Retrieve all purchases associated with a given customer username.
-
-        Args:
-            username (str): The username of the customer.
-
-        Returns:
-            list[Purchase]: A list of purchases matching the username.
-        """
-        if username is None:
-            return []
-        
-        lookup = username.strip().lower()
-        return [
-            p for p in self._purchases.values() 
-            if p.customer and hasattr(p.customer, 'username') and isinstance(p.customer.username, str) and p.customer.username.strip().lower() == lookup
-        ]
 
     def add(self, purchase: Purchase) -> Purchase:
         """Adds a new purchase transaction record to the repository.
@@ -72,7 +55,22 @@ class PurchaseRepository:
             Purchase | None: The updated Purchase instance if the target ID was found
                 and replaced; otherwise, None.
         """
-        if id not in self._purchases:
+        if self._purchases.get(id) is None:
             return None
         self._purchases[id] = purchase
         return purchase
+    
+    def delete(self, id) -> bool:
+        """
+        Delete a Purchase by id.
+
+        Args:
+            id (int): The purchase id number.
+
+        Returns:
+            bool: True if deletion occurred, False otherwise.
+        """
+        if self._purchases.get(id) is None:
+            return False
+        del self._purchases[id]
+        return True

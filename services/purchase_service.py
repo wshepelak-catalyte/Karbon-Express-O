@@ -1,29 +1,79 @@
 from repositories.purchase_repository import PurchaseRepository
-from repositories.customer_repository import CustomerRepository
+from datetime import datetime, timezone
+from typing import Any
+from decimal import Decimal
 from models.purchase import Purchase
 from models.customer import Customer
+from exceptions import PurchaseIdNotFound
 
 class PurchaseService:
-    def __init__(self, purchase_repository: PurchaseRepository, customer_repository: CustomerRepository):
+    def __init__(self, purchase_repository: PurchaseRepository):
         self._purchase_repository = purchase_repository
-        self._customer_repository = customer_repository
+        self._empty_ids = []
+        self._next_id = 0
 
-    def add_purchase(self, purchase: Purchase) -> Purchase:
-        """Create a purchase record and link it to the stored customer account."""
-        if purchase.customer is None or not hasattr(purchase.customer, "username"):
-            raise ValueError("Purchase must include a customer with a username.")
+    def create_purchase(
+                self,
+                timestamp : datetime,
+                items : list[Any],
+                total_cost : float | Decimal,
+                customer : Customer 
+            ):
+        created_purchase_id = None
+        if len(self._empty_ids) == 0:
+            created_purchase_id = self._next_id
+            self._next_id += 1
+        else:
+            created_purchase_id = self._empty_ids.pop()
 
-        customer = self._customer_repository.get_by_username(purchase.customer.username)
-        if customer is None:
-            raise ValueError(f"Customer '{purchase.customer.username}' does not exist.")
+        created_purchase = Purchase(
+                id=created_purchase_id,
+                timestamp=timestamp,
+                items=items,
+                total_cost=Decimal(str(total_cost)),
+                customer=customer
+            )
+        self._purchase_repository.add(created_purchase)
 
-        purchase.customer = customer
-        customer.add_purchase(purchase)
-        return self._purchase_repository.add(purchase)
+    def get_all_purchases(self):
+        return self._purchase_repository.get_all()
+    
+    def get_total_spending(self) -> Decimal:
+        total = Decimal("0")
+        for purchase in self._purchase_repository.get_all():
+            total += purchase.total_cost
+        return total
+    
+    def get_purchase_by_id(self, id : int) -> Purchase:
+        returned_purchase = self._purchase_repository.get_by_id(id)
+        if returned_purchase is None:
+            raise PurchaseIdNotFound(f"No purchase with ID {str(id)} was found in the repository")
+        return returned_purchase
+    
+    def update_purchase(
+                self,
+                id : int,
+                timestamp : datetime,
+                items : list[Any],
+                total_cost : Decimal | float,
+                customer : Customer
+            ):
+        old_purchase = self._purchase_repository.get_by_id(id)
+        if old_purchase is None:
+            raise PurchaseIdNotFound(f"No purchase with ID {str(id)} was found in the repository")
+        updated_purchase = Purchase(
+            id=id,
+            timestamp=timestamp,
+            items=items,
+            total_cost=Decimal(str(total_cost)),
+            customer=customer
+        )
 
-    def get_customer_purchase_history(self, username: str) -> list[Purchase]:
-        """Return all purchases for a given customer by username."""
-        customer = self._customer_repository.get_by_username(username)
-        if customer is None:
-            return []
-        return list(customer.purchases)
+        self._purchase_repository.update(id, updated_purchase)
+
+    def delete_ingredient(self, id : int):
+        deleted_purchase = self._purchase_repository.get_by_id(id)
+        if deleted_purchase is None:
+            raise PurchaseIdNotFound(f"No purchase with ID {str(id)} was found in the repository")
+        self._empty_ids.append(deleted_purchase.id)
+        self._purchase_repository.delete(id)
