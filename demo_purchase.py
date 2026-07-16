@@ -77,9 +77,9 @@ class PurchaseDemoApp:
         )
         self.bg_service.add_baked_good(croissant)
 
-        # 1. Create Alice (Starts as a clean $0.00 prospect for your live demo) #[cite: 12]
+        # 1. Create Alice (Starts as a clean $0.00 prospect for your live demo)
         self.customer_service.create_customer(
-            name="Alice Smith",
+            name_or_customer="Alice Smith",
             email="alice@example.com",
             phone="555-0199",
             username="alice_adventures",
@@ -87,23 +87,23 @@ class PurchaseDemoApp:
             purchases=[]
         )
 
-        # 2. Create Bob (An existing repeat customer) #[cite: 12]
+        # 2. Create Bob (An existing repeat customer) 
         bob = self.customer_service.create_customer(
-            name="Bob Miller",
+            name_or_customer="Bob Miller",
             email="bob@example.com",
             phone="555-0244",
             username="bob_brews",
-            lifetime_spend=Decimal("0.00"),  # Will accumulate dynamically below #[cite: 2]
+            lifetime_spend=Decimal("0.00"),  # Will accumulate dynamically below 
             purchases=[]
         )
 
-        # 3. Create Charlie (A high-value VIP regular) #[cite: 12]
+        # 3. Create Charlie (A high-value VIP regular)
         charlie = self.customer_service.create_customer(
-            name="Charlie Green",
+            name_or_customer="Charlie Green",
             email="charlie@example.com",
             phone="555-0877",
             username="charlie_croissant",
-            lifetime_spend=Decimal("0.00"),  # Will accumulate dynamically below #[cite: 2]
+            lifetime_spend=Decimal("0.00"),  # Will accumulate dynamically below 
             purchases=[]
         )
 
@@ -112,14 +112,14 @@ class PurchaseDemoApp:
         thirty_days_ago = now - timedelta(days=30)
         seven_days_ago = now - timedelta(days=7)
 
-        # Bob's History (1 order last month, 1 order last week) #[cite: 15]
+        # Bob's History (1 order last month, 1 order last week)
         self.purchase_service.create_purchase(
             timestamp=thirty_days_ago,
             items=[latte],
             total_cost=Decimal("4.20"),
             customer=bob
         )
-        bob.add_purchase(self.purchase_service.get_all_purchases()[-1]) #[cite: 2]
+        bob.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
         self.purchase_service.create_purchase(
             timestamp=seven_days_ago,
@@ -127,16 +127,16 @@ class PurchaseDemoApp:
             total_cost=Decimal("7.20"),
             customer=bob
         )
-        bob.add_purchase(self.purchase_service.get_all_purchases()[-1]) #[cite: 2]
+        bob.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
-        # Charlie's VIP History (Multiple orders) #[cite: 15]
+        # Charlie's VIP History (Multiple orders)
         self.purchase_service.create_purchase(
             timestamp=thirty_days_ago,
             items=[latte, croissant],
             total_cost=Decimal("7.20"),
             customer=charlie
         )
-        charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) #[cite: 2]
+        charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
         self.purchase_service.create_purchase(
             timestamp=thirty_days_ago + timedelta(days=5),
@@ -144,7 +144,7 @@ class PurchaseDemoApp:
             total_cost=Decimal("9.00"),
             customer=charlie
         )
-        charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) #[cite: 2]
+        charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
         self.purchase_service.create_purchase(
             timestamp=seven_days_ago + timedelta(days=2),
@@ -152,7 +152,7 @@ class PurchaseDemoApp:
             total_cost=Decimal("11.40"),
             customer=charlie
         )
-        charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) #[cite: 2]
+        charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
     def run(self):
         try:
@@ -195,7 +195,7 @@ class PurchaseDemoApp:
     def simulate_purchase(self):
         print("\n--- 🛒 PO DEMO: SIMULATING PURCHASE FLOW ---")
         try:
-            customer = self.customer_service.get_customer_by_name("Alice Smith") #[cite: 12]
+            customer = self.customer_service.get_customer_by_name("Alice Smith")
         except Exception:
             print("Customer 'Alice Smith' not found!")
             return
@@ -223,7 +223,7 @@ class PurchaseDemoApp:
         total_cost = sum(item.sale_price for item in items_to_buy)
         purchase_timestamp = datetime.now(timezone.utc)
         
-        # 1. Create the Purchase #[cite: 15]
+        # 1. Create the Purchase
         self.purchase_service.create_purchase(
             timestamp=purchase_timestamp,
             items=items_to_buy,
@@ -231,9 +231,9 @@ class PurchaseDemoApp:
             customer=customer
         )
         
-        # Retrieve purchase & link to customer history to update lifetime spending #[cite: 2]
+        # Retrieve purchase & link to customer history to update lifetime spending 
         latest_purchase = self.purchase_service.get_all_purchases()[-1]
-        customer.add_purchase(latest_purchase) #[cite: 2]
+        customer.add_purchase(latest_purchase) 
 
         print("\n✅ TRANSACTION SUCCESSFUL!")
         print("-" * 35)
@@ -283,8 +283,8 @@ class PurchaseDemoApp:
 
     def crud_create(self):
         print("\n--- [CREATE] NEW PURCHASE ---")
-        # Let administrator choose the customer #[cite: 12]
-        customers = self.customer_service.get_all_customers() #[cite: 12]
+        # Let administrator choose the customer
+        customers = self.customer_service.get_all_customers()
         if not customers:
             print("No customers available. Please add a customer first.")
             return
@@ -327,7 +327,7 @@ class PurchaseDemoApp:
 
         total_cost = sum(item.sale_price for item in selected_items)
         
-        # Save #[cite: 15]
+        # Save
         self.purchase_service.create_purchase(
             timestamp=datetime.now(timezone.utc),
             items=selected_items,
@@ -335,9 +335,9 @@ class PurchaseDemoApp:
             customer=customer
         )
         
-        # Link to customer profiles to keep spends uniform #[cite: 2]
+        # Link to customer profiles to keep spends uniform 
         latest = self.purchase_service.get_all_purchases()[-1]
-        customer.add_purchase(latest) #[cite: 2]
+        customer.add_purchase(latest) 
         
         print(f"✅ Created Purchase ID #{latest.id} successfully!")
 
@@ -360,7 +360,7 @@ class PurchaseDemoApp:
             return
         
         try:
-            p = self.purchase_service.get_purchase_by_id(int(id_str)) #[cite: 15]
+            p = self.purchase_service.get_purchase_by_id(int(id_str))
             items_str = ", ".join([item.name for item in p.items])
             print(f"\n📍 Purchase Record Details:")
             print(f"  ID:         {p.id}")
@@ -380,7 +380,7 @@ class PurchaseDemoApp:
         
         p_id = int(id_str)
         try:
-            old_purchase = self.purchase_service.get_purchase_by_id(p_id) #[cite: 15]
+            old_purchase = self.purchase_service.get_purchase_by_id(p_id)
         except Exception as e:
             print(f"❌ {e}")
             return
@@ -393,7 +393,7 @@ class PurchaseDemoApp:
             print("❌ Invalid currency format.")
             return
 
-        # Keep original timestamp and items for simplicity of update, or customize #[cite: 15]
+        # Keep original timestamp and items for simplicity of update, or customize
         self.purchase_service.update_purchase(
             id=p_id,
             timestamp=old_purchase.timestamp,
@@ -412,7 +412,7 @@ class PurchaseDemoApp:
         
         p_id = int(id_str)
         try:
-            self.purchase_service.delete_purchase(p_id) #[cite: 15]
+            self.purchase_service.delete_purchase(p_id)
             print(f"🗑️ Purchase ID #{p_id} deleted successfully.")
         except Exception as e:
             print(f"❌ {e}")
@@ -423,7 +423,7 @@ class PurchaseDemoApp:
     # ==========================================
     def show_customer_profile(self):
         print("\n--- 👤 CUSTOMER DIRECTORY & LOYALTY HISTORY ---")
-        customers = self.customer_service.get_all_customers() #[cite: 12]
+        customers = self.customer_service.get_all_customers()
         if not customers:
             print("No customers found in the system.")
             return
@@ -458,9 +458,9 @@ class PurchaseDemoApp:
     def show_analytics(self):
         print("\n--- 📈 SHOP REVENUE ANALYTICS ---")
         
-        # 1. Fetch total statistics using the purchase service #[cite: 15]
-        total_revenue = self.purchase_service.get_total_spending() #[cite: 15]
-        purchases = self.purchase_service.get_all_purchases() #[cite: 15]
+        # 1. Fetch total statistics using the purchase service
+        total_revenue = self.purchase_service.get_total_spending()
+        purchases = self.purchase_service.get_all_purchases()
         total_transactions = len(purchases)
 
         # 2. Extract boundaries for the current calendar month
