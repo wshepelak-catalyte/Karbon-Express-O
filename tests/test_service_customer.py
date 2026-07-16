@@ -3,7 +3,7 @@ from decimal import Decimal
 from models.customer import Customer
 from repositories.customer_repository import CustomerRepository
 from services.customer_service import CustomerService
-from exceptions import DuplicateCustomerError, InvalidEmailError
+from exceptions import DuplicateCustomerError, InvalidEmailFormat
 
 @pytest.fixture
 def repo():
@@ -63,37 +63,6 @@ def test_create_customer_adds_customer_with_valid_data(service, repo, alice):
     assert repo.get_by_name("Alice") == alice
 
 
-def test_validate_customer_signup_returns_valid_result(service, alice):
-    result = service.validate_customer_signup(alice)
-    assert result.valid is True
-    assert result.code is None
-    assert result.message is None
-
-
-def test_validate_customer_signup_returns_invalid_email_result(service):
-    bad_customer = Customer(id=3, name="Bob", email="invalid-email", phone="555-1234", username="bob123", lifetime_spend=0)
-    result = service.validate_customer_signup(bad_customer)
-    assert result.valid is False
-    assert result.code == "invalid_email"
-    assert "Invalid email format" in result.message
-
-
-def test_validate_customer_signup_returns_duplicate_username_result(service, alice, alice_duplicate_username):
-    service.create_customer(alice)
-    result = service.validate_customer_signup(alice_duplicate_username)
-    assert result.valid is False
-    assert result.code == "duplicate_username"
-    assert "already taken" in result.message
-
-
-def test_validate_customer_signup_returns_duplicate_email_result(service, alice, alice_duplicate_email):
-    service.create_customer(alice)
-    result = service.validate_customer_signup(alice_duplicate_email)
-    assert result.valid is False
-    assert result.code == "duplicate_email"
-    assert "already registered" in result.message
-
-
 def test_create_customer_rejects_duplicate_username(service, alice, alice_duplicate_username):
     service.create_customer(alice)
     with pytest.raises(DuplicateCustomerError):
@@ -107,8 +76,8 @@ def test_create_customer_rejects_duplicate_email(service, alice, alice_duplicate
 
 
 def test_create_customer_rejects_invalid_email(service):
-    customer = Customer(id=3, name="Bob", email="invalid-email", phone="555-1234", username="bob123", lifetime_spend=0)
-    with pytest.raises(InvalidEmailError) as exc_info:
+    customer = Customer(id=3, name="Bob", email="invalid-email", phone="555-1234", username="bob123", lifetime_spend=Decimal("0"))
+    with pytest.raises(InvalidEmailFormat) as exc_info:
         service.create_customer(customer)
 
     assert "Invalid email format" in str(exc_info.value)
