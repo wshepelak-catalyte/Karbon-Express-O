@@ -87,3 +87,15 @@ def test_delete_returns_true_on_success(repo, espresso):
 def test_delete_returns_false_when_target_missing(repo, espresso):
     repo.add(espresso)
     assert repo.delete(999) is False
+
+
+def test_get_by_name_returns_matching_drink_case_insensitive(repo, espresso, latte):
+    repo.add(espresso)
+    repo.add(latte)
+    assert repo.get_by_name("espresso") == espresso
+    assert repo.get_by_name(" LATTE ") == latte
+
+
+def test_get_by_name_returns_none_when_not_found(repo, espresso):
+    repo.add(espresso)
+    assert repo.get_by_name("Cappuccino") is None

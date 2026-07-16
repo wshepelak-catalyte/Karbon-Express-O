@@ -11,7 +11,9 @@ def repo():
 
 @pytest.fixture
 def mock_customer():
-    return Mock()
+    customer = Mock()
+    customer.username = "alice123"
+    return customer
 
 @pytest.fixture
 def mock_item():
@@ -56,6 +58,26 @@ def test_get_by_id_returns_matching_purchase(repo, purchase_one, purchase_two):
 def test_get_by_id_returns_none_when_not_found(repo, purchase_one):
     repo.add(purchase_one)
     assert repo.get_by_id(999) is None
+
+def test_get_by_customer_username_returns_matching_purchases(repo, purchase_one):
+    repo.add(purchase_one)
+    result = repo.get_by_customer_username("alice123")
+    assert result == [purchase_one]
+
+def test_get_by_customer_username_is_case_insensitive(repo, purchase_one):
+    repo.add(purchase_one)
+    result = repo.get_by_customer_username("ALICE123")
+    assert result == [purchase_one]
+
+def test_get_by_customer_username_returns_empty_when_not_found(repo, purchase_one):
+    repo.add(purchase_one)
+    result = repo.get_by_customer_username("missing")
+    assert result == []
+
+def test_get_by_customer_username_returns_empty_when_username_is_none(repo, purchase_one):
+    repo.add(purchase_one)
+    result = repo.get_by_customer_username(None)
+    assert result == []
 
 def test_update_replaces_existing_purchase(repo, purchase_one, purchase_two):
     repo.add(purchase_one)

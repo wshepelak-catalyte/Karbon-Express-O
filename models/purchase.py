@@ -1,9 +1,12 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from decimal import Decimal
 from numbers import Number
-from typing import Any
-from models.customer import Customer
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from models.customer import Customer
 
 
 @dataclass
