@@ -71,7 +71,7 @@ class PurchaseService:
 
         self._purchase_repository.update(id, updated_purchase)
 
-    def delete_ingredient(self, id : int):
+    def delete_purchase(self, id : int):
         deleted_purchase = self._purchase_repository.get_by_id(id)
         if deleted_purchase is None:
             raise PurchaseIdNotFound(f"No purchase with ID {str(id)} was found in the repository")
