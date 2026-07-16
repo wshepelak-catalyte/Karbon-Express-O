@@ -3,19 +3,21 @@ Repository for managing Ingredient objects in memory.
 """
 
 from models.ingredient import Ingredient
+from collections import OrderedDict
+
 
 class IngredientRepository:
     """
     Provides CRUD operations for Ingredient objects stored in memory.
 
     Attributes:
-        _ingredients (list[Ingredient]): Internal list storing Ingredient instances.
+        _ingredients (OrderedDict[str, Ingredient]): Internal dictionary storing Ingredient instances.
     """
     def __init__(self):
         """
         Initialize an empty IngredientRepository
         """
-        self._ingredients: list[Ingredient] = []
+        self._ingredients = OrderedDict()
 
     def get_all(self)->list[Ingredient]:
         """
@@ -24,7 +26,7 @@ class IngredientRepository:
         Returns:
             list[Ingredient]: A list of all stored ingredients.
         """
-        return self._ingredients
+        return list(self._ingredients.values())
     
     def get_by_name(self, name: str) -> Ingredient | None:
         """
@@ -36,7 +38,7 @@ class IngredientRepository:
         Returns:
             Ingredient | None: The matching Ingredient, or None if not found.
         """
-        return next((i for i in self._ingredients if i.name == name), None)
+        return self._ingredients.get(name)
     
     def add(self, ingredient : Ingredient) -> Ingredient:
         """
@@ -48,7 +50,7 @@ class IngredientRepository:
         Returns:
             Ingredient: The added ingredient.
         """
-        self._ingredients.append(ingredient)
+        self._ingredients[ingredient.name] = ingredient
         return ingredient
 
     def update(self, name : str, ingredient : Ingredient) -> Ingredient | None:
@@ -62,12 +64,10 @@ class IngredientRepository:
         Returns:
             Ingredient | None: The updated ingredient, or None if not found.
         """
-        for iterator, _ingredient in enumerate(self._ingredients):
-            if _ingredient.name == name:
-                self._ingredients[iterator] = ingredient
-                return ingredient
-            
-        return None
+        if self._ingredients.get(name) is None:
+            return None
+        self._ingredients[name] = ingredient
+        return ingredient
 
     def delete(self, name: str) -> bool:
         """
@@ -79,9 +79,7 @@ class IngredientRepository:
         Returns:
             bool: True if deletion occurred, False otherwise.
         """
-        delete_occured = False
-        for iterator, _ingredient in enumerate(self._ingredients):
-            if _ingredient.name == name:
-                del self._ingredients[iterator]
-                delete_occured = True
-        return delete_occured
+        if self._ingredients.get(name) is None:
+            return False
+        del self._ingredients[name]
+        return True

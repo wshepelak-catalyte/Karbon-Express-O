@@ -12,6 +12,7 @@ class BakedGood:
         allergens: list[str],
         purchasing_cost: Decimal | float,
         markup_percentage: Decimal | float,
+        available: bool = True,
     ):
         self.id = id
         self.name = name
@@ -19,6 +20,7 @@ class BakedGood:
         self.allergens = allergens
         self.purchasing_cost = Decimal(str(purchasing_cost))
         self.markup_percentage = Decimal(str(markup_percentage))
+        self.available = bool(available)
         self.sale_price = self._calculate_sale_price()
 
     def _calculate_sale_price(self) -> Decimal:

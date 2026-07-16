@@ -1,5 +1,6 @@
 from numbers import Number
 from models.drink import Drink
+from collections import OrderedDict
 
 class DrinkRepository:
     """A repository for managing in-memory storage of Drink instances.
@@ -10,7 +11,7 @@ class DrinkRepository:
 
     def __init__(self):
         """Initializes an empty drink repository."""
-        self._drinks: list[Drink] = []
+        self._drinks = OrderedDict()
 
     def get_all(self) -> list[Drink]:
         """Retrieves all drinks currently stored in the repository.
@@ -18,18 +19,21 @@ class DrinkRepository:
         Returns:
             list[Drink]: A list containing all managed Drink objects.
         """
-        return self._drinks
+        return list(self._drinks.values())
 
-    def get_by_id(self, id: Number) -> Drink | None:
-        """Finds a specific drink by its unique numerical identifier.
+   
+
+    def get_by_name(self, name: str) -> Drink | None:
+        """Finds a drink by its name (case-insensitive, trimmed).
 
         Args:
-            id (Number): The numeric ID of the drink to look up.
+            name (str): The name of the drink to look up.
 
         Returns:
             Drink | None: The matching Drink object if found; otherwise, None.
         """
-        return next((d for d in self._drinks if d.id == id), None)
+       
+        return self._drinks.get(name)
 
     def add(self, drink: Drink) -> Drink:
         """Adds a new drink record to the repository.
@@ -40,10 +44,10 @@ class DrinkRepository:
         Returns:
             Drink: The Drink instance that was successfully added.
         """
-        self._drinks.append(drink)
+        self._drinks[drink.name] = drink
         return drink
 
-    def update(self, id: Number, drink: Drink) -> Drink | None:
+    def update(self, name: str, drink: Drink) -> Drink | None:
         """Replaces an existing drink record with updated information.
 
         Args:
@@ -54,14 +58,14 @@ class DrinkRepository:
             Drink | None: The updated Drink instance if the target ID was found
                 and replaced; otherwise, None.
         """
-        existing_drink = self.get_by_id(id)
-        if existing_drink:
-            self._drinks.remove(existing_drink)
-            self._drinks.append(drink)
-            return drink
-        return None
+        
+        if self._drinks.get(name) is None:
+            return None
+        
+        self._drinks[name] = drink
+        return drink
 
-    def delete(self, id: Number) -> bool:
+    def delete(self, name: str) -> bool:
         """Removes a drink record from the repository by its ID.
 
         Args:
@@ -71,8 +75,8 @@ class DrinkRepository:
             bool: True if the drink was found and successfully deleted; False
                 if no matching record was found.
         """
-        drink = self.get_by_id(id)
-        if drink:
-            self._drinks.remove(drink)
-            return True
-        return False
+        drink = self.get_by_name(name)
+        if drink is None:
+            return False
+        del self._drinks[name]
+        return True
