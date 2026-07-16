@@ -131,7 +131,7 @@ class PurchaseDemoApp:
 
         # Charlie's VIP History (Multiple orders)
         self.purchase_service.create_purchase(
-            timestamp=thirty_days_ago,
+            timestamp=thirty_days_ago + timedelta(hours=-9, minutes=-30, seconds=-15),
             items=[latte, croissant],
             total_cost=Decimal("7.20"),
             customer=charlie
@@ -139,7 +139,7 @@ class PurchaseDemoApp:
         charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
         self.purchase_service.create_purchase(
-            timestamp=thirty_days_ago + timedelta(days=5),
+            timestamp=thirty_days_ago + timedelta(days=5, hours=-10, minutes=-50, seconds=-47),
             items=[croissant, croissant, croissant],
             total_cost=Decimal("9.00"),
             customer=charlie
@@ -147,7 +147,7 @@ class PurchaseDemoApp:
         charlie.add_purchase(self.purchase_service.get_all_purchases()[-1]) 
 
         self.purchase_service.create_purchase(
-            timestamp=seven_days_ago + timedelta(days=2),
+            timestamp=seven_days_ago + timedelta(days=2, hours=-9, minutes=-5, seconds=-10),
             items=[latte, latte, croissant],
             total_cost=Decimal("11.40"),
             customer=charlie
