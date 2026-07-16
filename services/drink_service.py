@@ -3,7 +3,7 @@ from decimal import Decimal
 from repositories.drink_repository import DrinkRepository
 from models.ingredient import Ingredient
 from models.drink import Drink
-from exceptions import DuplicateDrinkError
+from exceptions import DuplicateDrinkError, DrinkNotFoundError
 
 class DrinkService:
     """Service layer for drink operations."""
@@ -75,12 +75,12 @@ class DrinkService:
 
         Raises
         ------
-        DrinkNotFound
+        DrinkNotFoundError
             If no drink with the given name exists.
         """
         drink = self._repository.get_by_name(name)
         if drink is None:
-            raise DrinkNotFound(f"No drink found with name '{name}'")
+            raise DrinkNotFoundError(f"No drink found with name '{name}'")
         return drink
     
     def update_drink(self, name: str, ingredients: list[Ingredient], cost_to_produce: Decimal, markup_percentage: Decimal, sale_price: Decimal, is_available: bool) -> None:
@@ -108,12 +108,12 @@ class DrinkService:
         ------
         DuplicateDrinkError
             If another drink with the same name already exists (case-insensitive).
-        DrinkNotFound
+        DrinkNotFoundError
             If no drink with the given ID exists.
         """
         existing_drink = self._repository.get_by_name(name)
         if existing_drink is None:
-            raise DrinkNotFound(f"No drink found with Name '{name}'")
+            raise DrinkNotFoundError(f"No drink found with Name '{name}'")
         
         if self.is_name_taken(name, exclude_id=existing_drink.id):
             raise DuplicateDrinkError(f"Drink '{name}' already exists.")
@@ -141,12 +141,12 @@ class DrinkService:
 
         Raises
         ------
-        DrinkNotFound
+        DrinkNotFoundError
             If no drink with the given name exists.
         """
         deleted_drink = self._repository.get_by_name(name)
         if deleted_drink is None:
-            raise DrinkNotFound(f"No drink found with name '{name}'")
+            raise DrinkNotFoundError(f"No drink found with name '{name}'")
         self._empty_ids.append(deleted_drink.id)
         self._repository.delete(name)
 
